@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+    <title>Orxan və Aytac | Nişan Dəvətnaməsi</title>
+
+    <meta
+            name="description"
+            content="Orxan və Aytacın 26 Avqust 2026-cı il tarixində keçiriləcək nişan mərasiminə dəvətlisiniz."
+    >
+    <meta name="theme-color" content="#e7accf">
+
+    <meta property="og:title" content="Orxan və Aytac | Nişan Dəvətnaməsi">
+    <meta
+            property="og:description"
+            content="Sizi nişan mərasimimizdə görməkdən məmnun olarıq."
+    >
+    <meta property="og:type" content="website">
+    <meta
+            property="og:image"
+            content="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1600&q=90"
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap"
+            rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+
+<body
+        style="
+        --hero-background-image:
+            linear-gradient(var(--color-hero-overlay), var(--color-hero-overlay)),
+            url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1800&q=85');
+
+        --venue-background-image:
+            linear-gradient(var(--color-section-overlay), var(--color-section-overlay)),
+            url('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1800&q=85');
+
+        --wishes-background-image:
+            linear-gradient(var(--color-section-overlay), var(--color-section-overlay)),
+            url('https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=1800&q=85');
+    "
+>
+<audio
+        id="weddingMusic"
+        src="assets/audio/love-story.mp3"
+        preload="metadata"
+        loop
+></audio>
+
+<div class="global-botanicals" aria-hidden="true">
+    <span class="petal petal-one"></span>
+    <span class="petal petal-two"></span>
+    <span class="petal petal-three"></span>
+    <span class="petal petal-four"></span>
+    <span class="petal petal-five"></span>
+    <span class="petal petal-six"></span>
+    <span class="petal petal-seven"></span>
+    <span class="petal petal-eight"></span>
+
+    <span class="flower flower-one"></span>
+    <span class="flower flower-two"></span>
+    <span class="flower flower-three"></span>
+    <span class="flower flower-four"></span>
+
+    <span class="leaf leaf-one"></span>
+    <span class="leaf leaf-two"></span>
+    <span class="leaf leaf-three"></span>
+    <span class="leaf leaf-four"></span>
+</div>
+
+<div class="intro-curtain" data-intro>
+    <div class="curtain-stage-light curtain-stage-light-left"></div>
+    <div class="curtain-stage-light curtain-stage-light-right"></div>
+
+    <div class="curtain-valance" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="cinema-curtain cinema-curtain-left" aria-hidden="true">
+        <div class="curtain-fabric"></div>
+        <div class="curtain-book-edge curtain-book-edge-left"></div>
+    </div>
+
+    <div class="cinema-curtain cinema-curtain-right" aria-hidden="true">
+        <div class="curtain-fabric"></div>
+        <div class="curtain-book-edge curtain-book-edge-right"></div>
+    </div>
+
+    <div class="curtain-center-line" aria-hidden="true"></div>
+    <div class="curtain-floor-shadow" aria-hidden="true"></div>
+
+    <div class="intro-sparkles" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="intro-content">
+        <p class="intro-kicker">Nişan Dəvətnaməsi</p>
+
+        <h1>Orxan & Aytac</h1>
+
+        <p>26 Avqust 2026</p>
+
+        <button
+                class="intro-button"
+                type="button"
+                data-open-invitation
+                aria-label="Nişan dəvətnaməsini aç"
+        >
+            Dəvətnaməni Aç
+        </button>
+    </div>
+</div>
+
+<div class="page-shell" data-page>
+    <header class="site-header" data-header>
+        <a
+                class="brand-link"
+                href="#home"
+                aria-label="Dəvətnamənin əvvəlinə keç"
+        >
+            <span>O</span>
+            <span>&</span>
+            <span>A</span>
+        </a>
+
+        <nav class="main-navigation" aria-label="Əsas menyu">
+            <a href="#invitation">Dəvətnamə</a>
+            <a href="#venue">Məkan</a>
+            <a href="#gallery">Qalereya</a>
+            <a href="#wishes">Arzular</a>
+        </nav>
+
+        <button
+                class="menu-toggle"
+                type="button"
+                data-menu-toggle
+                aria-label="Menyunu aç"
+                aria-expanded="false"
+        >
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <button
+            class="music-toggle is-muted"
+            type="button"
+            data-music-toggle
+            aria-label="Musiqini idarə et"
+            aria-pressed="false"
+    >
+        <span data-music-icon aria-hidden="true">×</span>
+    </button>
+
+    <main>
+        <section class="hero-section" id="home">
+            <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+            <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+
+            <div class="hero-content">
+                <p class="section-kicker reveal-item">
+                    Nişan Dəvətnaməsi
+                </p>
+
+                <h1 class="hero-title reveal-item">
+                    <span>Orxan</span>
+                    <span>&</span>
+                    <span>Aytac</span>
+                </h1>
+
+                <p class="hero-date reveal-item">
+                    26 Avqust 2026
+                </p>
+
+                <p class="hero-text reveal-item">
+                    Bu özəl günümüzdə sizi yanımızda görməkdən böyük
+                    məmnuniyyət duyarıq.
+                </p>
+
+                <div
+                        class="countdown-grid reveal-item"
+                        data-countdown="2026-08-26T18:00:00+04:00"
+                        aria-label="Nişan mərasiminə qalan vaxt"
+                >
+                    <div class="countdown-card">
+                        <strong data-days>00</strong>
+                        <span>Gün</span>
+                    </div>
+
+                    <div class="countdown-card">
+                        <strong data-hours>00</strong>
+                        <span>Saat</span>
+                    </div>
+
+                    <div class="countdown-card">
+                        <strong data-minutes>00</strong>
+                        <span>Dəqiqə</span>
+                    </div>
+
+                    <div class="countdown-card">
+                        <strong data-seconds>00</strong>
+                        <span>Saniyə</span>
+                    </div>
+                </div>
+
+                <div class="hero-actions reveal-item">
+                    <a class="primary-button" href="#invitation">
+                        Dəvətnaməyə Bax
+                    </a>
+
+                    <a class="secondary-button" href="#wishes">
+                        Arzunuzu Yazın
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section
+                class="invitation-section section-padding"
+                id="invitation"
+        >
+            <div class="container">
+                <div class="section-heading reveal-item">
+                    <p class="section-kicker">Dəvət</p>
+
+                    <h2>Sizi Nişanımıza Dəvət Edirik</h2>
+
+                    <p>
+                        Sevincimizi bizimlə bölüşməyiniz bu günü bizim üçün
+                        daha da unudulmaz edəcək.
+                    </p>
+                </div>
+
+                <div class="invitation-card reveal-card">
+                    <div
+                            class="card-ornament card-ornament-top"
+                            aria-hidden="true"
+                    ></div>
+
+                    <div
+                            class="card-ornament card-ornament-bottom"
+                            aria-hidden="true"
+                    ></div>
+
+                    <p class="invitation-small">Əziz qonaqlar</p>
+
+                    <h3>Orxan & Aytac</h3>
+
+                    <p class="invitation-message">
+                        Həyatımızın ən gözəl başlanğıclarından birində sizi
+                        yanımızda görməkdən şərəf duyarıq.
+                    </p>
+
+                    <div class="invitation-info-grid">
+                        <div>
+                            <span>Tarix</span>
+                            <strong>26 Avqust 2026</strong>
+                        </div>
+
+                        <div>
+                            <span>Saat</span>
+                            <strong>18:00</strong>
+                        </div>
+
+                        <div>
+                            <span>Məkan</span>
+                            <strong>Ay Lolo Şadlıq Sarayı</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="venue-section section-padding" id="venue">
+            <div class="container">
+                <div class="venue-layout">
+                    <div class="venue-copy reveal-item">
+                        <p class="section-kicker">Məkan</p>
+
+                        <h2>Ay Lolo Şadlıq Sarayı</h2>
+
+                        <p>
+                            Nişan mərasimimiz Ay Lolo Şadlıq Sarayında baş
+                            tutacaq. Sizi bu gözəl axşamda bizimlə birlikdə
+                            görmək istəyirik.
+                        </p>
+
+                        <a
+                                class="primary-button"
+                                href="https://maps.google.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                        >
+                            Xəritədə Aç
+                        </a>
+                    </div>
+
+                    <div class="venue-card reveal-card">
+                        <span>26</span>
+                        <strong>Avqust</strong>
+                        <em>2026</em>
+                        <p>Saat 18:00</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="gallery-section section-padding" id="gallery">
+            <div class="container">
+                <div class="section-heading reveal-item">
+                    <p class="section-kicker">Qalereya</p>
+
+                    <h2>Xatirə Anları</h2>
+
+                    <p>
+                        Sevgi və zəriflik dolu anlardan seçilmiş görüntülər.
+                    </p>
+                </div>
+
+                <div class="gallery-grid" data-gallery>
+                    <button
+                            class="gallery-card gallery-card-large reveal-gallery"
+                            type="button"
+                            data-gallery-index="0"
+                            aria-label="Birinci nişan şəklinə bax"
+                    >
+                        <img
+                                src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1600&q=90"
+                                alt="Orxan və Aytacın nişan qalereyası"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+
+                    <button
+                            class="gallery-card reveal-gallery"
+                            type="button"
+                            data-gallery-index="1"
+                            aria-label="İkinci nişan şəklinə bax"
+                    >
+                        <img
+                                src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1600&q=90"
+                                alt="Nişan mərasimindən xatirə şəkli"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+
+                    <button
+                            class="gallery-card reveal-gallery"
+                            type="button"
+                            data-gallery-index="2"
+                            aria-label="Üçüncü nişan şəklinə bax"
+                    >
+                        <img
+                                src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=90"
+                                alt="Nişan mərasimindən xatirə şəkli"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+
+                    <button
+                            class="gallery-card reveal-gallery"
+                            type="button"
+                            data-gallery-index="3"
+                            aria-label="Dördüncü nişan şəklinə bax"
+                    >
+                        <img
+                                src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1600&q=90"
+                                alt="Nişan mərasimindən xatirə şəkli"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+
+                    <button
+                            class="gallery-card reveal-gallery"
+                            type="button"
+                            data-gallery-index="4"
+                            aria-label="Beşinci nişan şəklinə bax"
+                    >
+                        <img
+                                src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1600&q=90"
+                                alt="Nişan mərasimindən xatirə şəkli"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section class="wishes-section section-padding" id="wishes">
+            <div class="container">
+                <div class="wishes-card reveal-card">
+                    <div class="section-heading">
+                        <p class="section-kicker">Arzularınız</p>
+
+                        <h2>Öz Arzularınızı Qeyd Edin</h2>
+
+                        <p>
+                            Bizim üçün xoş sözlərinizi və təbriklərinizi
+                            yazmağınız çox dəyərlidir.
+                        </p>
+                    </div>
+
+                    <form class="wishes-form" data-wishes-form>
+                        <div class="form-grid">
+                            <label>
+                                <span>Ad və Soyad</span>
+
+                                <input
+                                        type="text"
+                                        name="fullName"
+                                        placeholder="Adınızı və soyadınızı yazın"
+                                        autocomplete="name"
+                                        maxlength="100"
+                                        required
+                                >
+                            </label>
+
+                            <label>
+                                <span>Əlaqə Nömrəsi</span>
+
+                                <input
+                                        type="tel"
+                                        name="phone"
+                                        placeholder="+994 XX XXX XX XX"
+                                        autocomplete="tel"
+                                        inputmode="tel"
+                                        maxlength="30"
+                                >
+                            </label>
+                        </div>
+
+                        <label>
+                            <span>Arzunuz</span>
+
+                            <textarea
+                                    name="wish"
+                                    rows="5"
+                                    placeholder="Öz arzularınızı qeyd edin"
+                                    maxlength="1000"
+                                    required
+                            ></textarea>
+                        </label>
+
+                        <button class="primary-button" type="submit">
+                            Arzumu Göndər
+                        </button>
+
+                        <p
+                                class="form-status"
+                                data-form-status
+                                aria-live="polite"
+                        ></p>
+                    </form>
+
+                    <div
+                            class="guest-wishes"
+                            data-guest-wishes
+                            aria-label="Qonaqların arzuları"
+                    >
+                        <article class="guest-wish">
+                            <div class="guest-wish-heading">
+                                <span class="guest-wish-avatar">N</span>
+
+                                <div>
+                                    <h3>Nigar Məmmədova</h3>
+                                    <time datetime="2026-07-22">
+                                        22 İyul 2026
+                                    </time>
+                                </div>
+                            </div>
+
+                            <p>
+                                Sevginiz hər zaman ilk günkü kimi saf və gözəl
+                                olsun. Sizə bir ömür xoşbəxtlik arzulayıram.
+                            </p>
+                        </article>
+
+                        <article class="guest-wish">
+                            <div class="guest-wish-heading">
+                                <span class="guest-wish-avatar">E</span>
+
+                                <div>
+                                    <h3>Elvin Əliyev</h3>
+                                    <time datetime="2026-07-21">
+                                        21 İyul 2026
+                                    </time>
+                                </div>
+                            </div>
+
+                            <p>
+                                Bu gözəl başlanğıc həyatınızın ən xoş
+                                xatirələrindən biri olsun. Nişanınız mübarək!
+                            </p>
+                        </article>
+
+                        <article class="guest-wish">
+                            <div class="guest-wish-heading">
+                                <span class="guest-wish-avatar">A</span>
+
+                                <div>
+                                    <h3>Aysel Hüseynova</h3>
+                                    <time datetime="2026-07-20">
+                                        20 İyul 2026
+                                    </time>
+                                </div>
+                            </div>
+
+                            <p>
+                                Bir-birinizə olan sevginiz hər keçən gün daha
+                                da artsın. Həmişə üzünüz gülsün.
+                            </p>
+                        </article>
+
+                        <article class="guest-wish">
+                            <div class="guest-wish-heading">
+                                <span class="guest-wish-avatar">M</span>
+
+                                <div>
+                                    <h3>Murad Qasımov</h3>
+                                    <time datetime="2026-07-19">
+                                        19 İyul 2026
+                                    </time>
+                                </div>
+                            </div>
+
+                            <p>
+                                Orxan və Aytac, yeni həyat yolunuz sevgi,
+                                hörmət və gözəl xatirələrlə dolu olsun.
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="final-section section-padding">
+            <div class="container">
+                <div class="final-card reveal-card">
+                    <p>Sevincimizi bizimlə bölüşməyiniz diləyi ilə</p>
+                    <h2>Sizi Gözləyirik</h2>
+                    <strong>Orxan & Aytac</strong>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Orxan və Aytacın nişan dəvətnaməsi</p>
+    </footer>
+</div>
+
+<div
+        class="gallery-modal"
+        data-gallery-modal
+        aria-hidden="true"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Nişan qalereyası"
+>
+    <button
+            class="gallery-modal-close"
+            type="button"
+            data-gallery-close
+            aria-label="Qalereyanı bağla"
+    >
+        ×
+    </button>
+
+    <button
+            class="gallery-modal-arrow gallery-modal-arrow-left"
+            type="button"
+            data-gallery-prev
+            aria-label="Əvvəlki şəkil"
+    >
+        ‹
+    </button>
+
+    <figure class="gallery-modal-content">
+        <img src="" alt="Nişan şəkli" data-gallery-modal-image>
+    </figure>
+
+    <button
+            class="gallery-modal-arrow gallery-modal-arrow-right"
+            type="button"
+            data-gallery-next
+            aria-label="Növbəti şəkil"
+    >
+        ›
+    </button>
+
+    <div
+            class="gallery-modal-counter"
+            data-gallery-counter
+            aria-live="polite"
+    ></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+
+<script src="assets/js/countdown.js"></script>
+<script src="assets/js/gallery.js"></script>
+<script src="assets/js/wishes.js"></script>
+<script src="assets/js/intro.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

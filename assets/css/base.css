@@ -1,0 +1,307 @@
+:root {
+    --font-script: "Parisienne", cursive;
+    --font-display: "Marcellus", serif;
+    --font-body: "Plus Jakarta Sans", sans-serif;
+    --container-width: 1120px;
+    --radius-large: 34px;
+    --radius-medium: 24px;
+    --radius-small: 16px;
+    --transition: 260ms ease;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    color: var(--color-text);
+    background: var(--gradient-page);
+    font-family: var(--font-body);
+    line-height: 1.7;
+}
+
+body.is-locked {
+    overflow: hidden;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.page-shell {
+    overflow: hidden;
+    min-height: 100vh;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.page-shell.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.container {
+    width: min(100% - 32px, var(--container-width));
+    margin-inline: auto;
+}
+
+.section-padding {
+    padding: 112px 0;
+}
+
+.section-heading {
+    max-width: 720px;
+    margin: 0 auto 58px;
+    text-align: center;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(42px, 7vw, 82px);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--color-primary-deep);
+    letter-spacing: -0.03em;
+}
+
+.section-heading p {
+    margin: 18px auto 0;
+    color: var(--color-muted);
+    font-size: 16px;
+}
+
+.section-kicker {
+    margin: 0 0 14px;
+    color: var(--color-primary-dark);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+}
+
+.primary-button,
+.secondary-button,
+.outline-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    overflow: hidden;
+    padding: 0 26px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+    transition: transform var(--transition), background var(--transition), color var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+.primary-button::before,
+.secondary-button::before,
+.outline-button::before {
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    content: "";
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.44), transparent);
+    transform: skewX(-18deg);
+    transition: left 600ms ease;
+}
+
+.primary-button:hover::before,
+.secondary-button:hover::before,
+.outline-button:hover::before {
+    left: 130%;
+}
+
+.primary-button {
+    border: 1px solid rgba(217, 173, 106, 0.58);
+    color: var(--color-white);
+    background: var(--gradient-primary);
+    box-shadow: 0 18px 44px rgba(169, 95, 130, 0.22);
+}
+
+.secondary-button,
+.outline-button {
+    border: 1px solid rgba(247, 183, 207, 0.48);
+    color: var(--color-primary-deep);
+    background: rgba(255, 255, 255, 0.72);
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.outline-button:hover {
+    transform: translateY(-2px);
+}
+
+.primary-button:hover {
+    box-shadow: 0 22px 52px rgba(169, 95, 130, 0.3);
+}
+
+.site-header {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(calc(100% - 32px), 1040px);
+    padding: 12px 16px 12px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.56);
+    border-radius: 999px;
+    background: rgba(255, 247, 251, 0.82);
+    box-shadow: 0 22px 70px rgba(169, 95, 130, 0.14);
+    backdrop-filter: blur(18px);
+    transform: translateX(-50%);
+}
+
+.brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-width: 78px;
+    font-family: var(--font-display);
+    color: var(--color-primary-deep);
+    font-size: 26px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+}
+
+.main-navigation {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.main-navigation a {
+    padding: 10px 14px;
+    border-radius: 999px;
+    color: rgba(44, 26, 36, 0.68);
+    font-size: 14px;
+    font-weight: 800;
+    transition: background var(--transition), color var(--transition);
+}
+
+.main-navigation a:hover {
+    color: var(--color-primary-deep);
+    background: rgba(247, 183, 207, 0.22);
+}
+
+.menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+}
+
+.menu-toggle span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    margin: 4px auto;
+    border-radius: 99px;
+    background: var(--color-white);
+}
+
+.music-toggle {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 45;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border: 1px solid rgba(255, 255, 255, 0.56);
+    border-radius: 50%;
+    color: var(--color-white);
+    background: var(--gradient-primary);
+    box-shadow: 0 18px 42px rgba(169, 95, 130, 0.24);
+}
+
+.music-toggle.is-muted {
+    opacity: 0.72;
+}
+
+.site-footer {
+    padding: 36px 16px;
+    color: rgba(255, 255, 255, 0.86);
+    text-align: center;
+    background:
+            radial-gradient(circle at top, rgba(247, 183, 207, 0.34), transparent 40%),
+            var(--color-primary-deep);
+}
+
+.site-footer p {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .section-padding {
+        padding: 82px 0;
+    }
+
+    .site-header {
+        top: 14px;
+        border-radius: 26px;
+    }
+
+    .main-navigation {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        width: 230px;
+        padding: 14px;
+        border: 1px solid rgba(247, 183, 207, 0.34);
+        border-radius: 22px;
+        background: rgba(255, 247, 251, 0.96);
+        box-shadow: 0 22px 60px rgba(169, 95, 130, 0.16);
+    }
+
+    .site-header.is-open .main-navigation {
+        display: flex;
+    }
+
+    .main-navigation a {
+        padding: 12px 14px;
+    }
+
+    .menu-toggle {
+        display: inline-block;
+    }
+
+    .music-toggle {
+        right: 16px;
+        bottom: 16px;
+    }
+}

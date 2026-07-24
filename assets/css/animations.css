@@ -1,0 +1,238 @@
+.reveal-item,
+.reveal-card,
+.reveal-gallery {
+    will-change: transform, opacity;
+}
+
+.global-botanicals {
+    position: fixed;
+    inset: 0;
+    z-index: 12;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.global-botanicals span {
+    position: absolute;
+    top: -80px;
+    opacity: 0;
+    pointer-events: none;
+    animation-name: botanicalFall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform, opacity;
+}
+
+.petal {
+    width: 14px;
+    height: 22px;
+    border-radius: 80% 0 80% 0;
+    background:
+            radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.78), transparent 28%),
+            linear-gradient(135deg, rgba(255, 209, 232, 0.96), rgba(255, 105, 180, 0.72));
+    filter: blur(0.15px);
+}
+
+.flower {
+    width: 24px;
+    height: 24px;
+    background:
+            radial-gradient(circle at center, var(--color-gold-soft) 0 18%, transparent 19%),
+            radial-gradient(circle at 50% 18%, rgba(255, 209, 232, 0.96) 0 22%, transparent 23%),
+            radial-gradient(circle at 82% 50%, rgba(255, 105, 180, 0.82) 0 22%, transparent 23%),
+            radial-gradient(circle at 50% 82%, rgba(255, 209, 232, 0.96) 0 22%, transparent 23%),
+            radial-gradient(circle at 18% 50%, rgba(255, 105, 180, 0.82) 0 22%, transparent 23%);
+    filter: drop-shadow(0 6px 12px rgba(143, 26, 91, 0.14));
+}
+
+.leaf {
+    width: 14px;
+    height: 30px;
+    border-radius: 90% 0 90% 0;
+    background: linear-gradient(135deg, rgba(255, 156, 204, 0.76), rgba(255, 231, 183, 0.56));
+    filter: blur(0.2px);
+}
+
+.petal-one {
+    left: 7%;
+    animation-duration: 12s;
+    animation-delay: 0s;
+}
+
+.petal-two {
+    left: 18%;
+    animation-duration: 15s;
+    animation-delay: 1.2s;
+}
+
+.petal-three {
+    left: 31%;
+    animation-duration: 11s;
+    animation-delay: 2.4s;
+}
+
+.petal-four {
+    left: 44%;
+    animation-duration: 16s;
+    animation-delay: 0.8s;
+}
+
+.petal-five {
+    left: 57%;
+    animation-duration: 13s;
+    animation-delay: 1.8s;
+}
+
+.petal-six {
+    left: 68%;
+    animation-duration: 17s;
+    animation-delay: 3s;
+}
+
+.petal-seven {
+    left: 81%;
+    animation-duration: 12s;
+    animation-delay: 2s;
+}
+
+.petal-eight {
+    left: 94%;
+    animation-duration: 15s;
+    animation-delay: 4s;
+}
+
+.flower-one {
+    left: 12%;
+    animation-duration: 18s;
+    animation-delay: 2.2s;
+}
+
+.flower-two {
+    left: 51%;
+    animation-duration: 20s;
+    animation-delay: 5.2s;
+}
+
+.flower-three {
+    left: 76%;
+    animation-duration: 19s;
+    animation-delay: 7.2s;
+}
+
+.flower-four {
+    left: 88%;
+    animation-duration: 22s;
+    animation-delay: 9.4s;
+}
+
+.leaf-one {
+    left: 24%;
+    animation-duration: 16s;
+    animation-delay: 3.4s;
+}
+
+.leaf-two {
+    left: 63%;
+    animation-duration: 18s;
+    animation-delay: 4.8s;
+}
+
+.leaf-three {
+    left: 91%;
+    animation-duration: 17s;
+    animation-delay: 6.1s;
+}
+
+.leaf-four {
+    left: 39%;
+    animation-duration: 21s;
+    animation-delay: 8.2s;
+}
+
+@keyframes curtainBreath {
+    from {
+        transform: translateX(-8px) scaleX(1);
+    }
+
+    to {
+        transform: translateX(8px) scaleX(1.04);
+    }
+}
+
+@keyframes buttonLight {
+    0% {
+        left: -120%;
+    }
+
+    45% {
+        left: 130%;
+    }
+
+    100% {
+        left: 130%;
+    }
+}
+
+@keyframes sparkleFloat {
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: translate3d(0, 0, 0) scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate3d(12px, -22px, 0) scale(1.2);
+    }
+}
+
+@keyframes backgroundBreath {
+    from {
+        transform: scale(1.05) translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: scale(1.12) translate3d(-16px, 10px, 0);
+    }
+}
+
+@keyframes glowMove {
+    from {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(36px, -26px, 0) scale(1.14);
+    }
+}
+
+@keyframes botanicalFall {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, -80px, 0) rotate(0deg) scale(0.82);
+    }
+
+    10% {
+        opacity: 0.9;
+    }
+
+    48% {
+        transform: translate3d(58px, 52vh, 0) rotate(190deg) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate3d(-38px, 112vh, 0) rotate(410deg) scale(0.86);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+}
