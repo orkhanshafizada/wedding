@@ -19,8 +19,8 @@
     padding: 0;
     border: 0;
     border-radius: var(--radius-medium);
-    background: var(--color-blush);
-    box-shadow: 0 26px 76px rgba(143, 26, 91, 0.14);
+    background: linear-gradient(135deg, rgba(255, 230, 242, 0.98), rgba(255, 190, 221, 0.86));
+    box-shadow: 0 26px 76px rgba(143, 26, 91, 0.18);
 }
 
 .gallery-card-large {

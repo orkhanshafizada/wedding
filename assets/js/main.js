@@ -116,3 +116,4 @@ document.addEventListener("keydown", (event) => {
 initializeNavigation();
 initializeMusicToggle();
 initializeScrollAnimations();
+

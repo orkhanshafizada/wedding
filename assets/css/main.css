@@ -1,4 +1,4 @@
-@import url("./colors.css");
+@import url("./color.css");
 @import url("./base.css");
 @import url("./intro.css");
 @import url("./hero.css");
@@ -6,4 +6,30 @@
 @import url("./venue.css");
 @import url("./gallery.css");
 @import url("./wishes.css");
-@import url("./animations.css");
+@import url("./animation.css");
+
+body,
+.section-heading h2,
+.section-heading p,
+.section-kicker,
+.invitation-card,
+.invitation-card *,
+.details-card,
+.details-card *,
+.wishes-card,
+.wishes-card *,
+.site-header,
+.site-header *,
+.final-card,
+.final-card *,
+.venue-section,
+.venue-section * {
+    color: var(--color-white);
+}
+
+.wishes-form input,
+.wishes-form textarea,
+.wishes-form input::placeholder,
+.wishes-form textarea::placeholder {
+    color: var(--color-white);
+}

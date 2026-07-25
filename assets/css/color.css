@@ -1,0 +1,63 @@
+:root {
+    --color-primary-deep: #7b234f;
+    --color-primary-dark: #b74b86;
+    --color-primary: #e884b8;
+    --color-primary-medium: #f2a5ca;
+    --color-primary-soft: #ffd6e9;
+    --color-primary-light: #fff0f7;
+
+    --color-surface-blush: #ffeaf4;
+    --color-surface-pearl: #fff7fb;
+    --color-surface-white: #ffffff;
+
+    --color-accent: #d6a35f;
+    --color-accent-soft: #ffe3b3;
+
+    --color-text-main: #3d1530;
+    --color-text-muted: #7d4e68;
+    --color-text-heading: #6b1d49;
+    --color-text-on-light: #4d1938;
+
+    --color-border-soft: rgba(232, 132, 184, 0.42);
+    --color-shadow-soft: rgba(123, 35, 79, 0.2);
+
+    --gradient-page:
+            radial-gradient(circle at 10% 8%, rgba(232, 132, 184, 0.5), transparent 28%),
+            radial-gradient(circle at 88% 16%, rgba(255, 214, 233, 0.72), transparent 28%),
+            radial-gradient(circle at 50% 92%, rgba(214, 163, 95, 0.22), transparent 30%),
+            linear-gradient(135deg, #fff1f7 0%, #ffd3e7 45%, #fff7fb 100%);
+
+    --gradient-primary: linear-gradient(135deg, #f2a5ca, #b74b86);
+    --gradient-accent: linear-gradient(135deg, var(--color-accent-soft), var(--color-accent));
+
+    --color-pink-deep: var(--color-primary-deep);
+    --color-pink-dark: var(--color-primary-dark);
+    --color-pink: var(--color-primary);
+    --color-pink-medium: var(--color-primary-medium);
+    --color-pink-soft: var(--color-primary-soft);
+    --color-pink-light: var(--color-primary-light);
+
+    --color-blush: var(--color-surface-blush);
+    --color-pearl: var(--color-surface-pearl);
+    --color-white: var(--color-surface-white);
+
+    --color-gold: var(--color-accent);
+    --color-gold-soft: var(--color-accent-soft);
+
+    --color-text: var(--color-text-main);
+    --color-muted: var(--color-text-muted);
+    --color-border: var(--color-border-soft);
+    --color-shadow: var(--color-shadow-soft);
+
+    --color-panther-deep: var(--color-primary-deep);
+    --color-panther-dark: var(--color-primary-dark);
+    --color-panther: var(--color-primary);
+    --color-panther-hot: var(--color-primary-medium);
+    --color-panther-soft: var(--color-primary-soft);
+    --color-panther-light: var(--color-primary-light);
+
+    --color-red-deep: var(--color-primary-deep);
+    --color-red-dark: var(--color-primary-dark);
+    --color-red: var(--color-primary);
+    --color-red-soft: var(--color-primary-medium);
+}

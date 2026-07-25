@@ -43,4 +43,4 @@ wishesForm?.addEventListener("submit", (event) => {
             ease: "power2.out"
         });
     }
-});ee
+});
