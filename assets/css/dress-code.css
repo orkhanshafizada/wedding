@@ -1,0 +1,290 @@
+/* assets/css/dress-code.css */
+
+.dress-code-section {
+    position: relative;
+    display: grid;
+    min-height: min(760px, 90svh);
+    place-items: center;
+    overflow: hidden;
+    padding:
+            clamp(76px, 10vw, 126px)
+            max(20px, env(safe-area-inset-right))
+            clamp(82px, 11vw, 138px)
+            max(20px, env(safe-area-inset-left));
+    background:
+            radial-gradient(
+                    circle at 50% 14%,
+                    rgba(255, 255, 255, 0.98),
+                    transparent 34%
+            ),
+            radial-gradient(
+                    circle at 10% 84%,
+                    rgba(232, 132, 184, 0.2),
+                    transparent 28%
+            ),
+            linear-gradient(
+                    180deg,
+                    #fffafc 0%,
+                    #fcecf4 52%,
+                    #fff8fb 100%
+            );
+    isolation: isolate;
+}
+
+.dress-code-section::before {
+    position: absolute;
+    inset: 18px;
+    z-index: -1;
+    content: "";
+    border: 1px solid rgba(214, 163, 95, 0.28);
+    border-radius: 34px;
+    pointer-events: none;
+}
+
+.dress-code-container {
+    width: min(100%, 760px);
+    margin-inline: auto;
+}
+
+.dress-code-card {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(56px, 9vw, 92px) clamp(24px, 8vw, 82px);
+    border: 1px solid rgba(214, 163, 95, 0.44);
+    border-radius: clamp(26px, 5vw, 42px);
+    text-align: center;
+    background:
+            radial-gradient(
+                    circle at 50% 0%,
+                    rgba(232, 132, 184, 0.14),
+                    transparent 34%
+            ),
+            rgba(255, 253, 254, 0.94);
+    box-shadow:
+            0 28px 70px rgba(117, 49, 81, 0.12),
+            inset 0 0 0 8px rgba(255, 255, 255, 0.54);
+    backdrop-filter: blur(18px);
+}
+
+.dress-code-card::before,
+.dress-code-card::after {
+    position: absolute;
+    width: 76px;
+    height: 76px;
+    content: "";
+    border-color: rgba(232, 132, 184, 0.42);
+    pointer-events: none;
+}
+
+.dress-code-card::before {
+    top: 18px;
+    left: 18px;
+    border-top: 1px solid;
+    border-left: 1px solid;
+    border-radius: 18px 0 0;
+}
+
+.dress-code-card::after {
+    right: 18px;
+    bottom: 18px;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-radius: 0 0 18px;
+}
+
+.dress-code-kicker {
+    margin: 0 0 12px;
+    color: var(--color-primary-deep);
+    font-size: clamp(10px, 2.4vw, 13px);
+    font-weight: 800;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+}
+
+.dress-code-card h2 {
+    margin: 0;
+    color: var(--color-text-heading);
+    font-family: var(--font-script);
+    font-size: clamp(54px, 11vw, 94px);
+    font-weight: 400;
+    line-height: 1;
+}
+
+.dress-code-divider {
+    position: relative;
+    width: min(190px, 48%);
+    height: 20px;
+    margin: 26px auto 24px;
+}
+
+.dress-code-divider::before,
+.dress-code-divider::after {
+    position: absolute;
+    top: 50%;
+    width: calc(50% - 12px);
+    height: 1px;
+    content: "";
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(214, 163, 95, 0.86)
+    );
+}
+
+.dress-code-divider::before {
+    left: 0;
+}
+
+.dress-code-divider::after {
+    right: 0;
+    transform: scaleX(-1);
+}
+
+.dress-code-divider span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border: 1px solid rgba(214, 163, 95, 0.9);
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.dress-code-palette {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+}
+
+.dress-code-color {
+    display: block;
+    width: clamp(42px, 11vw, 58px);
+    aspect-ratio: 1;
+    margin-inline: -4px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 7px 18px rgba(80, 37, 58, 0.15);
+}
+
+.dress-code-color-one {
+    background: #f7e9dc;
+}
+
+.dress-code-color-two {
+    background: #dfc6aa;
+}
+
+.dress-code-color-three {
+    background: #b99b7c;
+}
+
+.dress-code-color-four {
+    background: #827164;
+}
+
+.dress-code-color-five {
+    background: #443a38;
+}
+
+.dress-code-message {
+    max-width: 450px;
+    margin: 0 auto;
+    color: var(--color-text-on-light);
+    font-family: var(--font-display);
+    font-size: clamp(15px, 3.6vw, 20px);
+    line-height: 1.8;
+}
+
+.dress-code-message strong {
+    display: inline-block;
+    color: var(--color-primary-deep);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.dress-code-decoration {
+    position: absolute;
+    z-index: -1;
+    width: clamp(160px, 30vw, 360px);
+    aspect-ratio: 1;
+    opacity: 0.32;
+    pointer-events: none;
+}
+
+.dress-code-decoration-left {
+    bottom: -7%;
+    left: -8%;
+    transform: rotate(18deg);
+}
+
+.dress-code-decoration-right {
+    top: -8%;
+    right: -8%;
+    transform: rotate(198deg);
+}
+
+.dress-code-decoration span {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 42%;
+    height: 82%;
+    border: 1px solid rgba(157, 40, 94, 0.56);
+    border-radius: 50% 50% 10% 50%;
+    transform-origin: bottom center;
+}
+
+.dress-code-decoration span:nth-child(1) {
+    transform: translateX(-50%) rotate(-38deg);
+}
+
+.dress-code-decoration span:nth-child(2) {
+    transform: translateX(-50%);
+}
+
+.dress-code-decoration span:nth-child(3) {
+    transform: translateX(-50%) rotate(38deg);
+}
+
+@media (max-width: 640px) {
+    .dress-code-section {
+        min-height: auto;
+        padding:
+                70px
+                max(10px, env(safe-area-inset-right))
+                78px
+                max(10px, env(safe-area-inset-left));
+    }
+
+    .dress-code-section::before {
+        inset: 8px;
+        border-radius: 24px;
+    }
+
+    .dress-code-card {
+        width: 100%;
+        padding: 58px 18px;
+        border-radius: 24px;
+        box-sizing: border-box;
+    }
+
+    .dress-code-card::before,
+    .dress-code-card::after {
+        width: 52px;
+        height: 52px;
+    }
+
+    .dress-code-card h2 {
+        font-size: clamp(56px, 18vw, 76px);
+    }
+
+    .dress-code-palette {
+        margin-bottom: 24px;
+    }
+
+    .dress-code-message {
+        max-width: 290px;
+        font-size: 15px;
+    }
+}

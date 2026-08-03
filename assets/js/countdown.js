@@ -1,3 +1,5 @@
+// countdown.js
+
 const countdown = document.querySelector("[data-countdown]");
 const daysElement = document.querySelector("[data-days]");
 const hoursElement = document.querySelector("[data-hours]");

@@ -6,15 +6,34 @@ const weddingMusic = document.getElementById("weddingMusic");
 
 const closeNavigation = () => {
     header?.classList.remove("is-open");
+    menuToggle?.setAttribute("aria-expanded", "false");
 };
 
 const initializeNavigation = () => {
     menuToggle?.addEventListener("click", () => {
-        header?.classList.toggle("is-open");
+        if (!header) {
+            return;
+        }
+
+        const isOpen = header.classList.toggle("is-open");
+
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
     });
 
     document.querySelectorAll(".main-navigation a").forEach((link) => {
         link.addEventListener("click", closeNavigation);
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!header?.classList.contains("is-open")) {
+            return;
+        }
+
+        if (header.contains(event.target)) {
+            return;
+        }
+
+        closeNavigation();
     });
 };
 
@@ -23,9 +42,11 @@ const updateMusicToggleState = () => {
         return;
     }
 
-    const isMuted = weddingMusic.paused;
-    musicToggle.classList.toggle("is-muted", isMuted);
-    musicIcon.textContent = isMuted ? "×" : "♪";
+    const isPlaying = !weddingMusic.paused;
+
+    musicToggle.classList.toggle("is-muted", !isPlaying);
+    musicToggle.setAttribute("aria-pressed", String(isPlaying));
+    musicIcon.textContent = isPlaying ? "♪" : "×";
 };
 
 const initializeMusicToggle = () => {
@@ -36,20 +57,16 @@ const initializeMusicToggle = () => {
             return;
         }
 
-        if (weddingMusic.paused) {
-            try {
-                await weddingMusic.play();
-            } catch (error) {
-                return;
-            }
-
-            updateMusicToggleState();
-
+        if (!weddingMusic.paused) {
+            weddingMusic.pause();
             return;
         }
 
-        weddingMusic.pause();
-        updateMusicToggleState();
+        try {
+            await weddingMusic.play();
+        } catch {
+            updateMusicToggleState();
+        }
     });
 
     weddingMusic?.addEventListener("play", updateMusicToggleState);
@@ -64,6 +81,10 @@ const initializeScrollAnimations = () => {
     gsap.registerPlugin(ScrollTrigger);
 
     gsap.utils.toArray(".reveal-item").forEach((element) => {
+        if (element.closest(".hero-content")) {
+            return;
+        }
+
         gsap.from(element, {
             opacity: 0,
             y: 34,
@@ -71,7 +92,8 @@ const initializeScrollAnimations = () => {
             ease: "power3.out",
             scrollTrigger: {
                 trigger: element,
-                start: "top 86%"
+                start: "top 86%",
+                once: true
             }
         });
     });
@@ -86,7 +108,8 @@ const initializeScrollAnimations = () => {
             ease: "power3.out",
             scrollTrigger: {
                 trigger: element,
-                start: "top 84%"
+                start: "top 84%",
+                once: true
             }
         });
     });
@@ -101,7 +124,8 @@ const initializeScrollAnimations = () => {
             ease: "power3.out",
             scrollTrigger: {
                 trigger: element,
-                start: "top 88%"
+                start: "top 88%",
+                once: true
             }
         });
     });
@@ -116,4 +140,3 @@ document.addEventListener("keydown", (event) => {
 initializeNavigation();
 initializeMusicToggle();
 initializeScrollAnimations();
-

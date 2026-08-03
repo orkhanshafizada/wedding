@@ -1,3 +1,5 @@
+//wishes.js
+
 const wishesForm = document.querySelector("[data-wishes-form]");
 const formStatus = document.querySelector("[data-form-status]");
 

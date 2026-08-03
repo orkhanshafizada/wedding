@@ -1,4 +1,7 @@
-const galleryCards = document.querySelectorAll("[data-gallery-index]");
+const galleryCards = Array.from(
+    document.querySelectorAll("[data-gallery-index]")
+);
+
 const galleryModal = document.querySelector("[data-gallery-modal]");
 const galleryModalImage = document.querySelector("[data-gallery-modal-image]");
 const galleryModalCounter = document.querySelector("[data-gallery-counter]");
@@ -6,25 +9,48 @@ const galleryCloseButton = document.querySelector("[data-gallery-close]");
 const galleryPrevButton = document.querySelector("[data-gallery-prev]");
 const galleryNextButton = document.querySelector("[data-gallery-next]");
 
-const galleryItems = [
-    {
-        image: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1600&q=90"
-    },
-    {
-        image: "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=1600&q=90"
-    },
-    {
-        image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=90"
-    },
-    {
-        image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1600&q=90"
-    },
-    {
-        image: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=1600&q=90"
-    }
-];
+const galleryItems = galleryCards
+    .map((card) => {
+        const image = card.querySelector("img");
+
+        if (!image) {
+            return null;
+        }
+
+        return {
+            image: image.getAttribute("src"),
+            alt: image.getAttribute("alt") || "Orxan və Aytacın nişan şəkli"
+        };
+    })
+    .filter(Boolean);
 
 let activeGalleryIndex = 0;
+let lastFocusedGalleryCard = null;
+let touchStartX = null;
+let touchStartY = null;
+
+const isGalleryOpen = () => {
+    return galleryModal?.classList.contains("is-active") ?? false;
+};
+
+const normalizeGalleryIndex = (index) => {
+    if (galleryItems.length === 0) {
+        return 0;
+    }
+
+    return (index + galleryItems.length) % galleryItems.length;
+};
+
+const updateGalleryImage = (item) => {
+    if (!galleryModalImage || !galleryModalCounter) {
+        return;
+    }
+
+    galleryModalImage.src = item.image;
+    galleryModalImage.alt = item.alt;
+    galleryModalCounter.textContent =
+        `${activeGalleryIndex + 1} / ${galleryItems.length}`;
+};
 
 const renderGalleryModal = () => {
     const currentItem = galleryItems[activeGalleryIndex];
@@ -33,90 +59,176 @@ const renderGalleryModal = () => {
         return;
     }
 
-    if (window.gsap) {
-        gsap.to(galleryModalImage, {
-            opacity: 0,
-            scale: 0.96,
-            duration: 0.18,
-            onComplete: () => {
-                galleryModalImage.src = currentItem.image;
-                galleryModalImage.alt = "Toy şəkli";
-                galleryModalCounter.textContent = `${activeGalleryIndex + 1} / ${galleryItems.length}`;
+    if (!window.gsap) {
+        updateGalleryImage(currentItem);
+        return;
+    }
 
-                gsap.to(galleryModalImage, {
+    gsap.killTweensOf(galleryModalImage);
+
+    gsap.to(galleryModalImage, {
+        opacity: 0,
+        scale: 0.97,
+        duration: 0.16,
+        ease: "power1.out",
+        onComplete: () => {
+            updateGalleryImage(currentItem);
+
+            gsap.fromTo(
+                galleryModalImage,
+                {
+                    opacity: 0,
+                    scale: 0.97
+                },
+                {
                     opacity: 1,
                     scale: 1,
-                    duration: 0.32,
+                    duration: 0.3,
                     ease: "power2.out"
-                });
-            }
-        });
-
-        return;
-    }
-
-    galleryModalImage.src = currentItem.image;
-    galleryModalImage.alt = "Toy şəkli";
-    galleryModalCounter.textContent = `${activeGalleryIndex + 1} / ${galleryItems.length}`;
+                }
+            );
+        }
+    });
 };
 
-const openGalleryModal = (index) => {
-    if (!galleryModal) {
+const openGalleryModal = (index, sourceCard) => {
+    if (
+        !galleryModal ||
+        !galleryModalImage ||
+        galleryItems.length === 0
+    ) {
         return;
     }
 
-    activeGalleryIndex = index;
+    activeGalleryIndex = normalizeGalleryIndex(index);
+    lastFocusedGalleryCard = sourceCard ?? null;
+
     renderGalleryModal();
 
     galleryModal.classList.add("is-active");
     galleryModal.setAttribute("aria-hidden", "false");
     document.body.classList.add("is-locked");
 
-    if (window.gsap) {
-        gsap.fromTo(galleryModal, {
-            opacity: 0
-        }, {
-            opacity: 1,
-            duration: 0.28,
-            ease: "power2.out"
+    requestAnimationFrame(() => {
+        galleryCloseButton?.focus({
+            preventScroll: true
         });
+    });
 
-        gsap.fromTo(".gallery-modal-content", {
-            y: 26,
-            scale: 0.96
-        }, {
-            y: 0,
-            scale: 1,
-            duration: 0.42,
-            ease: "power3.out"
-        });
-    }
-};
-
-const closeGalleryModal = () => {
-    if (!galleryModal || !galleryModalImage) {
+    if (!window.gsap) {
         return;
     }
 
-    galleryModal.classList.remove("is-active");
-    galleryModal.setAttribute("aria-hidden", "true");
-    galleryModalImage.src = "";
-    document.body.classList.remove("is-locked");
+    gsap.fromTo(
+        ".gallery-modal-content",
+        {
+            y: 24,
+            scale: 0.96
+        },
+        {
+            y: 0,
+            scale: 1,
+            duration: 0.4,
+            ease: "power3.out"
+        }
+    );
+};
+
+const closeGalleryModal = () => {
+    if (!galleryModal || !isGalleryOpen()) {
+        return;
+    }
+
+    const completeClosing = () => {
+        galleryModal.classList.remove("is-active");
+        galleryModal.setAttribute("aria-hidden", "true");
+
+        if (galleryModalImage) {
+            galleryModalImage.src = "";
+            galleryModalImage.alt = "";
+        }
+
+        document.body.classList.remove("is-locked");
+
+        lastFocusedGalleryCard?.focus({
+            preventScroll: true
+        });
+
+        lastFocusedGalleryCard = null;
+    };
+
+    if (!window.gsap) {
+        completeClosing();
+        return;
+    }
+
+    gsap.to(galleryModal, {
+        opacity: 0,
+        duration: 0.2,
+        ease: "power1.out",
+        onComplete: () => {
+            completeClosing();
+            gsap.set(galleryModal, {
+                clearProps: "opacity"
+            });
+        }
+    });
 };
 
 const showPreviousGalleryItem = () => {
-    activeGalleryIndex = activeGalleryIndex === 0 ? galleryItems.length - 1 : activeGalleryIndex - 1;
+    activeGalleryIndex = normalizeGalleryIndex(activeGalleryIndex - 1);
     renderGalleryModal();
 };
 
 const showNextGalleryItem = () => {
-    activeGalleryIndex = activeGalleryIndex === galleryItems.length - 1 ? 0 : activeGalleryIndex + 1;
+    activeGalleryIndex = normalizeGalleryIndex(activeGalleryIndex + 1);
     renderGalleryModal();
 };
 
-galleryCards.forEach((card) => {
+const trapGalleryFocus = (event) => {
+    if (
+        event.key !== "Tab" ||
+        !galleryModal ||
+        !isGalleryOpen()
+    ) {
+        return;
+    }
+
+    const focusableElements = Array.from(
+        galleryModal.querySelectorAll("button:not([disabled])")
+    );
+
+    if (focusableElements.length === 0) {
+        return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+        return;
+    }
+
+    if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+    }
+};
+
+galleryCards.forEach((card, fallbackIndex) => {
     card.addEventListener("click", () => {
-        openGalleryModal(Number(card.dataset.galleryIndex));
+        const declaredIndex = Number.parseInt(
+            card.dataset.galleryIndex ?? "",
+            10
+        );
+
+        const resolvedIndex = Number.isInteger(declaredIndex)
+            ? declaredIndex
+            : fallbackIndex;
+
+        openGalleryModal(resolvedIndex, card);
     });
 });
 
@@ -130,20 +242,73 @@ galleryModal?.addEventListener("click", (event) => {
     }
 });
 
+galleryModal?.addEventListener(
+    "touchstart",
+    (event) => {
+        const touch = event.changedTouches[0];
+
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+    },
+    {
+        passive: true
+    }
+);
+
+galleryModal?.addEventListener(
+    "touchend",
+    (event) => {
+        if (touchStartX === null || touchStartY === null) {
+            return;
+        }
+
+        const touch = event.changedTouches[0];
+        const distanceX = touch.clientX - touchStartX;
+        const distanceY = touch.clientY - touchStartY;
+
+        touchStartX = null;
+        touchStartY = null;
+
+        if (
+            Math.abs(distanceX) < 50 ||
+            Math.abs(distanceX) <= Math.abs(distanceY)
+        ) {
+            return;
+        }
+
+        if (distanceX > 0) {
+            showPreviousGalleryItem();
+            return;
+        }
+
+        showNextGalleryItem();
+    },
+    {
+        passive: true
+    }
+);
+
 document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-        closeGalleryModal();
+    if (!isGalleryOpen()) {
+        return;
     }
 
-    if (!galleryModal?.classList.contains("is-active")) {
+    trapGalleryFocus(event);
+
+    if (event.key === "Escape") {
+        event.preventDefault();
+        closeGalleryModal();
         return;
     }
 
     if (event.key === "ArrowLeft") {
+        event.preventDefault();
         showPreviousGalleryItem();
+        return;
     }
 
     if (event.key === "ArrowRight") {
+        event.preventDefault();
         showNextGalleryItem();
     }
 });
