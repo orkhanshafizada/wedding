@@ -10,6 +10,7 @@ use Modules\AdminPermission\Services\AdminAccessService;
 use Modules\Menu\Enums\MenuType;
 use Modules\Menu\Models\Menu;
 use Modules\Menu\Services\MenuService;
+use Illuminate\Http\RedirectResponse;
 
 class DashboardController extends Controller
 {
@@ -18,17 +19,11 @@ class DashboardController extends Controller
     ) {
     }
 
-    public function index(): View
+
+    public function index(): RedirectResponse
     {
-        $user = $this->adminUser();
-
-        $tree = $this->visibleRootMenus($user);
-
-        $types = $this->allowedMenuTypes($user);
-
-        return view('menu::admin.menu.index', [
-            'tree' => $tree,
-            'types' => $types,
+        return redirect()->route('admin.form.view-data', [
+            'menu' => '1ebac386-32db-481f-8c0b-1fcfa8650d92',
         ]);
     }
 
