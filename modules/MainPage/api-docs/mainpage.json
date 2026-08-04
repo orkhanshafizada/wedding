@@ -1,0 +1,345 @@
+{
+    "tag": "Main Page",
+    "description": "Main page constructor API. Returns the sections configured by the admin in their defined order. Sections may consist of sliders, banners, product blocks, show_on_main_page categories, show_on_main_page services, and dynamic blocks based on menu type.",
+    "basePathNote": "This endpoint works under the /v1 prefix inside a route group. The endpoint is public. Language selection is handled through the Content-Language header. Sections in the response are returned according to the sort_order defined in the admin panel.",
+    "headers": {
+        "Content-Language": {
+            "type": "text",
+            "required": true,
+            "description": "Language header. Example: az | en | ru. Middleware sets the application locale according to this header.",
+            "example": "az"
+        },
+        "Authorization": {
+            "type": "string",
+            "required": false,
+            "description": "Not required for this endpoint. This is a public endpoint.",
+            "example": "Bearer 1|4WHKo6K0AZNGiPiL9QWs1qXZ2CwnYbaCQyfUYr8M1f224977"
+        }
+    },
+    "cookie": {},
+    "endpoints": [
+        {
+            "path": "/main-page",
+            "method": "get",
+            "summary": "Main page sections list",
+            "description": "Returns the constructor sections for the main page. Each section is returned with its own source_type, and the actual data for that block is placed inside the data field. Inactive sections are not returned. Ordering is based on the sort_order defined in the admin panel. If a limit exists, the number of items returned inside each block is restricted accordingly.",
+            "authorization": "Public (does not require Authorization).",
+            "query": {},
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Main page sections loaded successfully",
+                    "data": [
+                        {
+                            "id": 1,
+                            "title": "Main Slider",
+                            "source_type": "slider",
+                            "source_label": "Slider",
+                            "source_reference": null,
+                            "menu_type": null,
+                            "menu_view_type": null,
+                            "limit": 3,
+                            "sort_order": 0,
+                            "status": "Active",
+                            "data": {
+                                "items": [
+                                    {
+                                        "id": 1,
+                                        "image": "https://example.com/storage/sliders/slider-1.jpg",
+                                        "mobile_image": "https://example.com/storage/sliders/slider-1-mobile.jpg",
+                                        "title": "Spring Campaign",
+                                        "description": "Special offers for all products",
+                                        "button_text": "Shop now",
+                                        "button_link": "/campaigns/spring",
+                                        "action_type": "link",
+                                        "hide_text_mobile": false,
+                                        "sort_order": 1
+                                    },
+                                    {
+                                        "id": 2,
+                                        "image": "https://example.com/storage/sliders/slider-2.jpg",
+                                        "mobile_image": "https://example.com/storage/sliders/slider-2-mobile.jpg",
+                                        "title": "New Collection",
+                                        "description": "Discover the newest arrivals",
+                                        "button_text": "View products",
+                                        "button_link": "/products/new",
+                                        "action_type": "link",
+                                        "hide_text_mobile": false,
+                                        "sort_order": 2
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 2,
+                            "title": "Homepage Banner",
+                            "source_type": "banner",
+                            "source_label": "Banner",
+                            "source_reference": "991199",
+                            "menu_type": null,
+                            "menu_view_type": null,
+                            "limit": 2,
+                            "sort_order": 1,
+                            "status": "Active",
+                            "data": {
+                                "position": "991199",
+                                "position_name": "Home Page 1",
+                                "items": [
+                                    {
+                                        "id": 10,
+                                        "image": "https://example.com/storage/banners/banner-1.jpg",
+                                        "mobile_image": "https://example.com/storage/banners/banner-1-mobile.jpg",
+                                        "title": "Big Sale",
+                                        "description": "Up to 40% off",
+                                        "hide_text_mobile": false,
+                                        "link": "/sale",
+                                        "sort_order": 1
+                                    },
+                                    {
+                                        "id": 11,
+                                        "image": "https://example.com/storage/banners/banner-2.jpg",
+                                        "mobile_image": "https://example.com/storage/banners/banner-2-mobile.jpg",
+                                        "title": "Accessories",
+                                        "description": "Best accessory deals",
+                                        "hide_text_mobile": false,
+                                        "link": "/categories/accessories",
+                                        "sort_order": 2
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 3,
+                            "title": "Discount Products",
+                            "source_type": "product_block",
+                            "source_label": "Product Blocks",
+                            "source_reference": "4",
+                            "menu_type": null,
+                            "menu_view_type": null,
+                            "limit": 8,
+                            "sort_order": 2,
+                            "status": "Active",
+                            "data": {
+                                "id": 4,
+                                "title": "Discount Products",
+                                "category_scope": "selected",
+                                "brand_scope": "all",
+                                "product_scope": "all",
+                                "only_discount_products": true,
+                                "limit": 12,
+                                "status": "Active",
+                                "categories": [
+                                    {
+                                        "id": 12,
+                                        "name": "Smartphones"
+                                    }
+                                ],
+                                "brands": [],
+                                "items": [
+                                    {
+                                        "product_id": 101,
+                                        "uuid": "b3cb2e38-5f53-4ef7-a8c7-558fa9f6c101",
+                                        "variation": {
+                                            "id": 9901,
+                                            "uuid": "2baf7a3d-6d25-4703-b5dc-fdbca4b46a11",
+                                            "name": "iPhone 14 Pro Green 256GB",
+                                            "slug": "iphone-14-pro-green-256gb",
+                                            "stock": 8,
+                                            "price": 2039.99,
+                                            "old_price": 2199.99,
+                                            "discount_price": 2039.99,
+                                            "meta_title": "iPhone 14 Pro Green 256GB",
+                                            "meta_description": "Apple iPhone 14 Pro Green 256GB",
+                                            "meta_keywords": "iphone, apple, 14 pro",
+                                            "main_image": "https://example.com/storage/variations/iphone14pro.jpg",
+                                            "gallery": [],
+                                            "filters": []
+                                        }
+                                    },
+                                    {
+                                        "product_id": 102,
+                                        "uuid": "44b348d2-b96a-46c7-9e58-e19a87b713b2",
+                                        "variation": {
+                                            "id": 9902,
+                                            "uuid": "513ca3dc-ea0e-4553-af6a-c775d8db0df0",
+                                            "name": "Samsung S24 128GB Black",
+                                            "slug": "samsung-s24-128gb-black",
+                                            "stock": 5,
+                                            "price": 1499,
+                                            "old_price": 1599,
+                                            "discount_price": 1499,
+                                            "meta_title": "Samsung S24 128GB Black",
+                                            "meta_description": null,
+                                            "meta_keywords": null,
+                                            "main_image": "https://example.com/storage/variations/s24-black.jpg",
+                                            "gallery": [],
+                                            "filters": []
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 4,
+                            "title": "Popular Categories",
+                            "source_type": "show_on_main_page_categories",
+                            "source_label": "Show on Main Page Categories",
+                            "source_reference": null,
+                            "menu_type": null,
+                            "menu_view_type": null,
+                            "limit": 6,
+                            "sort_order": 3,
+                            "status": "Active",
+                            "data": {
+                                "items": [
+                                    {
+                                        "id": 12,
+                                        "parent_id": null,
+                                        "type": "categories",
+                                        "status": true,
+                                        "in_header": true,
+                                        "in_footer": false,
+                                        "sort_order": 1,
+                                        "name": "Smartphones",
+                                        "link": "/smartphones",
+                                        "seo": {
+                                            "meta_title": "Smartphones",
+                                            "meta_description": "Smartphones category",
+                                            "meta_keywords": "smartphone, mobile"
+                                        },
+                                        "children": [
+                                            {
+                                                "id": 13,
+                                                "parent_id": 12,
+                                                "type": "categories",
+                                                "status": true,
+                                                "in_header": false,
+                                                "in_footer": false,
+                                                "sort_order": 1,
+                                                "name": "Apple",
+                                                "link": "/smartphones/apple",
+                                                "seo": {
+                                                    "meta_title": "Apple",
+                                                    "meta_description": null,
+                                                    "meta_keywords": null
+                                                },
+                                                "children": []
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 5,
+                            "title": "Services",
+                            "source_type": "show_on_main_page_services",
+                            "source_label": "Show on Main Page Services",
+                            "source_reference": null,
+                            "menu_type": null,
+                            "menu_view_type": null,
+                            "limit": 4,
+                            "sort_order": 4,
+                            "status": "Active",
+                            "data": {
+                                "items": [
+                                    {
+                                        "id": 30,
+                                        "parent_id": null,
+                                        "type": "content",
+                                        "status": true,
+                                        "in_header": false,
+                                        "in_footer": false,
+                                        "sort_order": 1,
+                                        "name": "Delivery Service",
+                                        "link": "/services/delivery",
+                                        "seo": {
+                                            "meta_title": "Delivery Service",
+                                            "meta_description": null,
+                                            "meta_keywords": null
+                                        },
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 6,
+                            "title": "Blog Grid",
+                            "source_type": "menu_type",
+                            "source_label": "Menu Type",
+                            "source_reference": null,
+                            "menu_type": "grids",
+                            "menu_view_type": null,
+                            "limit": 10,
+                            "sort_order": 5,
+                            "status": "Active",
+                            "data": {
+                                "items": [
+                                    {
+                                        "id": 41,
+                                        "parent_id": null,
+                                        "type": "grids",
+                                        "status": true,
+                                        "in_header": false,
+                                        "in_footer": false,
+                                        "sort_order": 1,
+                                        "name": "Blog",
+                                        "link": "/blog",
+                                        "seo": {
+                                            "meta_title": "Blog",
+                                            "meta_description": "Latest posts",
+                                            "meta_keywords": "blog, news"
+                                        },
+                                        "children": []
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        }
+    ],
+    "notes": [
+        "Sections are returned only from rows in the main_page_sections table where status=Active.",
+        "The response order is based on the sort_order defined through drag-and-drop in the admin panel.",
+        "When source_type=slider, active and ordered sliders are returned.",
+        "When source_type=banner, source_reference is used as the banner position. For example: 991199 = Home Page 1, 992299 = Home Page 2, or banner positions based on category/menu IDs.",
+        "When source_type=product_block, source_reference is the product_blocks.id. Products are selected dynamically according to that block's rules.",
+        "Inside a product block, the rules category_scope, brand_scope, product_scope, and only_discount_products are applied.",
+        "When source_type=show_on_main_page_categories, only active root menus with menus.show_on_main_page=1 and menus.type=categories are returned.",
+        "When source_type=show_on_main_page_services, only active root menus with menus.show_on_main_page=1, menus.type=content, and menus.view_type=Services are returned.",
+        "When source_type=menu_type, menus.type is filtered according to the selected menu_type. If menu_view_type is provided, menus.view_type is also added to the filter.",
+        "In menu type sections, categories may be intentionally placed at the end through separate option ordering on the admin side.",
+        "When limit is null, the source uses its own default behavior. If a limit value exists, the returned item count is restricted to that value.",
+        "Section title is multilingual, and in the admin panel it is required for required languages.",
+        "This endpoint is designed as a unified feed for the main page. The frontend should render the appropriate component according to source_type."
+    ]
+}

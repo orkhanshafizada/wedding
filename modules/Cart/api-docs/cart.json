@@ -1,0 +1,355 @@
+{
+    "tag": "Cart",
+    "description": "Cart APIs. For authenticated customers, cart is managed by customer_id. For guests, cart is managed only by X-Guest-Token.\n\nGuest requests use only the X-Guest-Token header.\nX-Cart-Token, Cart-Token, cart_token cookie and other legacy token mechanisms are not used.\n\nGuest token is created from the common Settings API endpoint: POST /v1/guest-token.\nThe same X-Guest-Token is used for Cart, Compare and Favorites.\n\nIf X-Guest-Token is not sent to cart write endpoints, backend can create a new active guest cart and return data.token in the cart response. However, recommended frontend flow is to create a guest token once with POST /v1/guest-token and send it in all guest Cart, Compare and Favorites requests.",
+    "basePathNote": "These endpoints work with the /v1 prefix.",
+    "headers": {
+        "X-Guest-Token": {
+            "type": "string",
+            "required": false,
+            "description": "The only token header for guest Cart, Compare and Favorites. It is not sent in the request body and is used only as a header.",
+            "example": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP"
+        },
+        "Authorization": {
+            "type": "string",
+            "required": false,
+            "description": "Bearer token for authenticated customers. Example: Authorization: Bearer {token}",
+            "example": "Bearer 1|4WHKo6K0AZNGiPiL9QWs1qXZ2CwnYbaCQyfUYr8M1f224977"
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/cart",
+            "method": "get",
+            "summary": "Get active cart",
+            "description": "Returns the active cart for an authenticated customer or a guest.\nFor authenticated customers, the active cart is resolved by customer_id.\nFor guests, only the X-Guest-Token header is used.\nIf token is missing and backend creates a new guest cart, the response returns data.token. The client must send that token as X-Guest-Token in the next guest Cart, Compare and Favorites requests.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Cart loaded successfully",
+                    "data": {
+                        "id": 12,
+                        "status": "active",
+                        "customer_id": null,
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "currency": "AZN",
+                        "promo": null,
+                        "totals": {
+                            "subtotal": 120.0,
+                            "discount": 0.0,
+                            "total": 120.0
+                        },
+                        "items": [
+                            {
+                                "id": 55,
+                                "product_variation_id": 101,
+                                "product_id": 10,
+                                "qty": 2,
+                                "price": 60.0,
+                                "line_total": 120.0,
+                                "created_at": "2026-02-06T10:30:00.000000Z",
+                                "updated_at": "2026-02-06T10:35:00.000000Z"
+                            }
+                        ],
+                        "merged_at": null,
+                        "expired_at": null,
+                        "converted_at": null,
+                        "created_at": "2026-02-06T10:20:00.000000Z",
+                        "updated_at": "2026-02-06T10:35:00.000000Z"
+                    }
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/cart/items",
+            "method": "post",
+            "summary": "Add item to cart",
+            "description": "Adds a product variation to the cart.\nFor guests, only the X-Guest-Token header is used.\nRecommended flow: create a guest token once with POST /v1/guest-token and send it as X-Guest-Token.\nIf the same variation already exists in the cart, qty is increased.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "product_variation_id": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Product variation ID to add.",
+                    "default": 101
+                },
+                "qty": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Quantity to add. Default is 1, minimum is 1.",
+                    "default": 1
+                }
+            },
+            "responses": {
+                "201": {
+                    "success": true,
+                    "message": "Item added successfully",
+                    "data": {
+                        "id": 12,
+                        "status": "active",
+                        "customer_id": null,
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "currency": "AZN",
+                        "promo": null,
+                        "totals": {
+                            "subtotal": 120.0,
+                            "discount": 0.0,
+                            "total": 120.0
+                        },
+                        "items": [
+                            {
+                                "id": 55,
+                                "product_variation_id": 101,
+                                "product_id": 10,
+                                "qty": 2,
+                                "price": 60.0,
+                                "line_total": 120.0
+                            }
+                        ],
+                        "created_at": "2026-02-06T10:20:00.000000Z",
+                        "updated_at": "2026-02-06T10:35:00.000000Z"
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/cart/items/{variationId}",
+            "method": "patch",
+            "summary": "Update cart item quantity",
+            "description": "Updates cart item quantity by product variation route parameter.\nFor guests, only the X-Guest-Token header is used.\nqty is required.\nIf qty is 0, the item is removed from the cart.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "qty": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Final quantity for this cart item. Use 0 to remove the item.",
+                    "default": 1
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Quantity updated successfully",
+                    "data": {
+                        "id": 12,
+                        "status": "active",
+                        "customer_id": null,
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "currency": "AZN",
+                        "promo": null,
+                        "totals": {
+                            "subtotal": 180.0,
+                            "discount": 0.0,
+                            "total": 180.0
+                        },
+                        "items": [
+                            {
+                                "product_variation_id": 101,
+                                "qty": 3,
+                                "price": 60.0,
+                                "line_total": 180.0
+                            }
+                        ]
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/cart/items/{variationId}",
+            "method": "delete",
+            "summary": "Remove item from cart",
+            "description": "Removes a product variation from the cart.\nFor guests, only the X-Guest-Token header is used.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Item removed successfully",
+                    "data": {
+                        "id": 12,
+                        "status": "active",
+                        "customer_id": null,
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "currency": "AZN",
+                        "promo": null,
+                        "totals": {
+                            "subtotal": 0.0,
+                            "discount": 0.0,
+                            "total": 0.0
+                        },
+                        "items": []
+                    }
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/cart/promo/validate",
+            "method": "post",
+            "summary": "Validate promo code",
+            "description": "Validates promo code status, date, usage limit and minimum total rules.\nThis endpoint does not apply the promo code to the cart.\nFor guests, only the X-Guest-Token header is used.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "code": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Promo code.",
+                    "default": "NEWYEAR10"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Promo code is valid.",
+                    "data": {
+                        "promo_id": 7,
+                        "code": "NEWYEAR10"
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Promo code is invalid.",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/cart/promo",
+            "method": "post",
+            "summary": "Apply promo code to cart",
+            "description": "Validates the promo code.\nIf validation succeeds, cart.promo_code_id is set and totals are recalculated.\nFor guests, only the X-Guest-Token header is used.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "code": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Promo code.",
+                    "default": "NEWYEAR10"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Promo applied successfully",
+                    "data": {
+                        "id": 12,
+                        "status": "active",
+                        "customer_id": null,
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "currency": "AZN",
+                        "promo": {
+                            "id": 7,
+                            "code": "NEWYEAR10"
+                        },
+                        "totals": {
+                            "subtotal": 200.0,
+                            "discount": 20.0,
+                            "total": 180.0
+                        }
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/cart/promo",
+            "method": "delete",
+            "summary": "Remove promo code from cart",
+            "description": "Sets cart.promo_code_id to null and recalculates totals.\nFor guests, only the X-Guest-Token header is used.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Promo removed successfully",
+                    "data": {
+                        "id": 12,
+                        "status": "active",
+                        "customer_id": null,
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "currency": "AZN",
+                        "promo": null,
+                        "totals": {
+                            "subtotal": 200.0,
+                            "discount": 0.0,
+                            "total": 200.0
+                        }
+                    }
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        }
+    ]
+}

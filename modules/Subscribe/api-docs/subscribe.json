@@ -1,0 +1,64 @@
+{
+    "tag": "Subscribe",
+    "description": "Endpoint for subscribing a customer using their email address. The same email address cannot be subscribed more than once.",
+    "basePathNote": "These endpoints may operate under the /v1 prefix inside a route group, depending on how the project is configured. Authorization is not required.",
+    "headers": {
+        "Content-Language": {
+            "type": "string",
+            "required": false,
+            "description": "Language code (for example: az, en, ru). If not provided, the default language is used.",
+            "example": "az"
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/subscribe",
+            "method": "post",
+            "summary": "Subscribe",
+            "description": "The customer subscribes by entering their email address. If the email already exists, a 422 response is returned.",
+            "authorization": false,
+            "body": {
+                "type": "object",
+                "required": [
+                    "email"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "required": true,
+                        "description": "Customer email address",
+                        "example": "customer@example.com"
+                    }
+                }
+            },
+            "formBody": {
+                "email": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Customer email address",
+                    "example": "customer@example.com"
+                }
+            },
+            "responses": {
+                "201": {
+                    "success": true,
+                    "message": "Subscribed",
+                    "data": {
+                        "id": 10,
+                        "email": "customer@example.com",
+                        "created_at": "2026-03-02T10:15:30.000000Z"
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation error",
+                    "errors": {
+                        "email": [
+                            "This email has already been subscribed."
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

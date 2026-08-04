@@ -1,0 +1,77 @@
+{
+    "tag": "Comment",
+    "description": "Product variation comment API və admin review workflow sənədləşməsi",
+    "basePathNote": "Bu endpoint-lər route group daxilində /api/v1 prefix-i ilə işləyir. Comment create public endpoint-dir. Authorization header göndərilərsə customer avtomatik tanınır.",
+    "headers": {
+        "Content-Language": {
+            "type": "text",
+            "required": true,
+            "description": "Dil header-i. Məs: az | en | ru.",
+            "example": "az"
+        },
+        "Authorization": {
+            "type": "string",
+            "required": false,
+            "description": "Auth customer üçün Bearer token.",
+            "example": "Bearer 1|4WHKo6K0AZNGiPiL9QWs1qXZ2CwnYbaCQyfUYr8M1f224977"
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/product/comments",
+            "method": "post",
+            "summary": "Product variation üçün comment göndər",
+            "description": "Customer və ya guest product variation üçün comment göndərir. Yeni comment həmişə Processing statusu ilə yaradılır. Rating məcburidir və 1-5 aralığında olmalıdır. Admin sonradan Approve və ya Decline edir.",
+            "authorization": "Public. Authorization olduqda customer_id avtomatik doldurulur.",
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "product_variation_id": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Comment yazılan variation ID",
+                    "example": 9901
+                },
+                "fullname": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Comment göndərən şəxsin tam adı",
+                    "example": "Orxan Məmmədov"
+                },
+                "rating": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Rating dəyəri. Yalnız 1, 2, 3, 4, 5 qəbul edir.",
+                    "example": 5
+                },
+                "comment": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Comment mətni",
+                    "example": "Məhsul keyfiyyətlidir, tövsiyə edirəm."
+                }
+            },
+            "responses": {
+                "201": {
+                    "success": true,
+                    "message": "Comment submitted successfully and is awaiting review.",
+                    "data": {
+                        "id": 1,
+                        "uuid": "4b1a8e0c-4f57-462d-8a34-85686d017f34",
+                        "rating": 5,
+                        "status": "Processing"
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": {
+                        "rating": [
+                            "Rating is required."
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+}

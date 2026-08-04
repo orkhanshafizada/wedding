@@ -1,0 +1,73 @@
+{
+    "tag": "Sitemap",
+    "description": "Frontend sitemap üçün public XML API endpoint-ləri. Endpoint-lər birbaşa XML qaytarır. Menular yalnız aktiv və sitemap-da göstərilməsi aktiv olan qeydlərdən, grid-lər yalnız aktiv grid-lərdən, product-lar isə aktiv və published product variation slug-larından hazırlanır.",
+    "basePathNote": "Bu endpoint-lər route group daxilində /v1 prefix-i ilə işləyə bilər (layihədə necə qurulubsa ona uyğun). Authorization tələb etmir.",
+    "headers": {
+        "Accept": {
+            "type": "string",
+            "required": false,
+            "description": "XML response istənildiyini bildirmək üçün istifadə edilə bilər.",
+            "example": "application/xml"
+        },
+        "Content-Language": {
+            "type": "string",
+            "required": false,
+            "description": "Sitemap endpoint-ləri bütün aktiv dillər üzrə URL və hreflang alternate link-ləri qaytarır. Bu header sitemap response-u tək dilə filter etmir.",
+            "example": "az"
+        }
+    },
+    "responseFormat": {
+        "contentType": "application/xml; charset=UTF-8",
+        "root": "urlset",
+        "namespace": "http://www.sitemaps.org/schemas/sitemap/0.9",
+        "alternateNamespace": "http://www.w3.org/1999/xhtml",
+        "urlFields": {
+            "loc": "Səhifənin absolute URL-i. Format: domain/lang/slug",
+            "xhtml:link": "Multilanguage alternate URL-lər. Hər aktiv dil üçün hreflang link qaytarılır.",
+            "lastmod": "Son yenilənmə tarixi. Format: YYYY-MM-DD",
+            "changefreq": "Səhifənin dəyişmə tezliyi. Məs: weekly, daily",
+            "priority": "Sitemap priority dəyəri. Məs: 0.8"
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/sitemap/menus",
+            "method": "get",
+            "summary": "Menu sitemap XML",
+            "description": "Menus table-dan sitemap üçün aktiv olan menu-ların XML sitemap datasını qaytarır. URL-lər domain/lang/slug formatında hazırlanır. Hər URL içində aktiv dillər üzrə xhtml:link alternate məlumatları olur.",
+            "authorization": false,
+            "responses": {
+                "200": {
+                    "content_type": "application/xml; charset=UTF-8",
+                    "example": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n  <url>\n    <loc>https://example.com/az/haqqimizda</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"az\" href=\"https://example.com/az/haqqimizda\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/en/haqqimizda\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://example.com/ru/haqqimizda\" />\n    <lastmod>2026-06-18</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>\n</urlset>"
+                }
+            }
+        },
+        {
+            "path": "/sitemap/grids",
+            "method": "get",
+            "summary": "Grid sitemap XML",
+            "description": "Grids table-dan yalnız is_active=true olan grid-lərin XML sitemap datasını qaytarır. Grid URL-i bağlı olduğu menu link-i və grid slug dəyəri əsasında domain/lang/menu-slug/grid-slug formatında hazırlanır. Hər URL içində aktiv dillər üzrə xhtml:link alternate məlumatları olur.",
+            "authorization": false,
+            "responses": {
+                "200": {
+                    "content_type": "application/xml; charset=UTF-8",
+                    "example": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n  <url>\n    <loc>https://example.com/az/layiheler/sergi-tedbiri</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"az\" href=\"https://example.com/az/layiheler/sergi-tedbiri\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/en/projects/exhibition-event\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://example.com/ru/proekty/vystavochnoe-sobytie\" />\n    <lastmod>2026-06-18</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n</urlset>"
+                }
+            }
+        },
+        {
+            "path": "/sitemap/products",
+            "method": "get",
+            "summary": "Product sitemap XML",
+            "description": "Products table-dan yalnız status=Active və published_at hazırkı tarixdən keçmiş olan product-ların variation translation slug-ları əsasında XML sitemap datasını qaytarır. URL product-un main category link-i və variation slug əsasında domain/lang/category-slug/product-slug formatında hazırlanır. Hər URL içində aktiv dillər üzrə xhtml:link alternate məlumatları olur.",
+            "authorization": false,
+            "responses": {
+                "200": {
+                    "content_type": "application/xml; charset=UTF-8",
+                    "example": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:xhtml=\"http://www.w3.org/1999/xhtml\">\n  <url>\n    <loc>https://example.com/az/kateqoriya/mehsul-slug</loc>\n    <xhtml:link rel=\"alternate\" hreflang=\"az\" href=\"https://example.com/az/kateqoriya/mehsul-slug\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"en\" href=\"https://example.com/en/category/product-slug\" />\n    <xhtml:link rel=\"alternate\" hreflang=\"ru\" href=\"https://example.com/ru/kategoriya/slug-tovara\" />\n    <lastmod>2026-06-18</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n</urlset>"
+                }
+            }
+        }
+    ]
+}

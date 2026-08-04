@@ -1,0 +1,957 @@
+{
+    "tag": "Order",
+    "description": "Order API-ləri. Checkout zamanı lazım olan çatdırılma seçimləri, promo kod yoxlamaları, database əsaslı payment method-lar, installment plan məlumatları və ödəniş callback-ləri bu bölmədə verilir.",
+    "basePathNote": "Bu endpoint-lər /v1 prefix-i route group daxilində avtomatik əlavə olunduğu üçün burada path-lar /v1 yazılmadan göstərilir.",
+    "headers": {
+        "Authorization": {
+            "type": "string",
+            "required": false,
+            "description": "Auth customer üçün Bearer token. Authorization: Bearer {token}",
+            "example": "Bearer 1|4WHKo6K0AZNGiPiL9QWs1qXZ2CwnYbaCQyfUYr8M1f224977"
+        },
+        "X-Guest-Token": {
+            "type": "string",
+            "required": false,
+            "description": "Guest üçün səbət token-i. Checkout və guest sifariş detailində istifadə oluna bilər.",
+            "example": "eE2xw7h3pK0mQ1nR8tY6uV4sW2xZ9aB7cD5eF1gH"
+        }
+    },
+    "cookie": {
+        "cart_token": {
+            "type": "string",
+            "required": false,
+            "description": "Guest üçün səbət token-i cookie üzərindən.",
+            "example": "eE2xw7h3pK0mQ1nR8tY6uV4sW2xZ9aB7cD5eF1gH"
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/order/delivery-prices",
+            "method": "get",
+            "summary": "Çatdırılma qiymətləri siyahısı",
+            "description": "Aktiv olan çatdırılma variantlarını qaytarır. İstəyə görə q query parametri ilə name üzrə axtarış, parent_id ilə isə parent-child filtr tətbiq edilə bilər. parent_id=0 olduqda yalnız root/main delivery price-lar qaytarılır.",
+            "authorization": "Public",
+            "query": {
+                "q": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Axtarış (name üzrə)",
+                    "example": "Bakı"
+                },
+                "parent_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Parent delivery price ID-si üzrə filtr. 0 göndərilərsə root/main delivery price-lar qaytarılır.",
+                    "example": 0
+                }
+            },
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": [
+                        {
+                            "id": 1,
+                            "parent_id": 0,
+                            "parent_name": null,
+                            "name": "Bakı",
+                            "price": 5,
+                            "status": "Active",
+                            "sort_order": 0
+                        },
+                        {
+                            "id": 2,
+                            "parent_id": 1,
+                            "parent_name": "Bakı",
+                            "name": "Nərimanov",
+                            "price": 7,
+                            "status": "Active",
+                            "sort_order": 1
+                        }
+                    ]
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/order/delivery-prices/{id}",
+            "method": "get",
+            "summary": "Çatdırılma qiyməti detayı",
+            "description": "Verilən ID-yə uyğun çatdırılma variantını qaytarır. Variant aktiv deyilsə 404 qaytarır. Response daxilində parent_id və parent_name də qaytarılır.",
+            "authorization": "Public",
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 2,
+                        "parent_id": 1,
+                        "parent_name": "Bakı",
+                        "name": "Nərimanov",
+                        "price": 7,
+                        "status": "Active",
+                        "sort_order": 1
+                    }
+                },
+                "404": {
+                    "success": false,
+                    "message": "Seçilən çatdırılma variantı aktiv deyil.",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/order/promo-codes/validate",
+            "method": "post",
+            "summary": "Promo kodu yoxla",
+            "description": "Promo kodun aktivliyini və scope qaydalarını yoxlayır. order_total göndərilərsə discount_amount hesablanır.",
+            "authorization": "Public",
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "code": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Promo kod",
+                    "example": "NEWYEAR10"
+                },
+                "order_total": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Sifariş məbləği",
+                    "example": 120
+                },
+                "category_ids": {
+                    "type": "array",
+                    "required": false,
+                    "description": "Kateqoriya ID-ləri",
+                    "example": [5, 9]
+                },
+                "product_ids": {
+                    "type": "array",
+                    "required": false,
+                    "description": "Məhsul ID-ləri",
+                    "example": [10, 11]
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Promo kod uğurla tətbiq oluna bilər.",
+                    "data": {
+                        "valid": true,
+                        "discount_amount": 12,
+                        "promo": {
+                            "id": 7,
+                            "code": "NEWYEAR10",
+                            "type": "percent",
+                            "value": 10,
+                            "usage_limit": 100,
+                            "used_count": 2,
+                            "starts_at": "2026-02-01T00:00:00.000000Z",
+                            "ends_at": "2026-03-31T00:00:00.000000Z",
+                            "min_order_total": 50,
+                            "categories_scope": "all",
+                            "products_scope": "all",
+                            "status": "Active"
+                        }
+                    }
+                },
+                "404": {
+                    "success": false,
+                    "message": "Promo kod tapılmadı.",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/order/checkout",
+            "method": "get",
+            "summary": "Checkout məlumatları",
+            "description": "Mövcud səbətə əsasən checkout üçün lazım olan məlumatları qaytarır. Auth olduqda customer ünvanları da qaytarılır. Guest üçün token header və ya cookie ilə oxunur. payment_methods siyahısı admin tərəfindən yaradılan order_payment_methods cədvəlindən gəlir. Hər payment method üçün key, name, description, type, is_online, requires_redirect, gateway_code, icon_path və installments qaytarılır. Əgər method installment dəstəkləyirsə installments daxilində artıq hesablanmış base_total, interest_amount, total_with_interest və monthly_amount da qaytarılır. Discount hour aktivdirsə və səbətdəki məhsul və ya variation həmin kampaniyaya daxildirsə item qiymətində discount_price tətbiq olunmuş nəticə qaytarılır. Query-də delivery_price_id göndərilərsə totals.delivery_price və installments hesablaması həmin delivery price üzərindən qurulur.",
+            "authorization": "Public. Auth olduqda Authorization: Bearer {token} göndərilə bilər.",
+            "query": {
+                "delivery_price_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Checkout summary-ni seçilmiş delivery price ilə yenidən hesablamaq üçün istifadə olunur.",
+                    "example": 2
+                }
+            },
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "cart": {
+                            "id": 15,
+                            "currency": "AZN",
+                            "promo_code": {
+                                "id": 7,
+                                "code": "NEWYEAR10"
+                            }
+                        },
+                        "items": [
+                            {
+                                "product_id": 10,
+                                "variation_id": 1001,
+                                "product_name": "iPhone 14 Pro Green 256GB",
+                                "variation_name": "iPhone 14 Pro Green 256GB",
+                                "image": "/storage/variations/iphone14pro.jpg",
+                                "qty": 1,
+                                "original_unit_price": 80,
+                                "unit_price": 70,
+                                "line_subtotal": 80,
+                                "line_discount_hour": 10,
+                                "line_total": 70
+                            }
+                        ],
+                        "totals": {
+                            "subtotal": 80,
+                            "discount_hour_discount": 10,
+                            "promo_discount": 7,
+                            "delivery_price": 2,
+                            "total": 65
+                        },
+                        "delivery_prices": [
+                            {
+                                "id": 1,
+                                "parent_id": 0,
+                                "name": "Bakı",
+                                "price": 5
+                            },
+                            {
+                                "id": 2,
+                                "parent_id": 1,
+                                "name": "Nərimanov",
+                                "price": 2
+                            }
+                        ],
+                        "addresses": [
+                            {
+                                "id": 3,
+                                "type": "shipping",
+                                "label": "Ev",
+                                "recipient_name": "Aydın Əliyev",
+                                "phone": "+994501112233",
+                                "country_id": 1,
+                                "delivery_price_id": 2,
+                                "delivery_price": {
+                                    "id": 2,
+                                    "parent_id": 1,
+                                    "name": "Nərimanov",
+                                    "price": 2
+                                },
+                                "region": "Nərimanov",
+                                "city": "Bakı",
+                                "postal_code": "AZ1000",
+                                "address_line1": "Nizami 10",
+                                "address_line2": "",
+                                "company": "",
+                                "note": "",
+                                "is_default": true
+                            }
+                        ],
+                        "payment_methods": [
+                            {
+                                "key": "cash_on_delivery",
+                                "name": "Qapıda nəğd ödəniş",
+                                "description": null,
+                                "type": "offline",
+                                "is_online": false,
+                                "requires_redirect": false,
+                                "gateway_code": null,
+                                "icon_path": null,
+                                "installments": [],
+                                "translation_language_id": 1
+                            },
+                            {
+                                "key": "birkart",
+                                "name": "BirKart 3/6/12 ay",
+                                "description": "Kartla hissəli ödəniş",
+                                "type": "installment",
+                                "is_online": false,
+                                "requires_redirect": false,
+                                "gateway_code": null,
+                                "icon_path": "https://app.example.com/storage/payment-methods/birkart.png",
+                                "installments": [
+                                    {
+                                        "id": 11,
+                                        "month": 3,
+                                        "percent": 0,
+                                        "sort_order": 0,
+                                        "base_total": 65,
+                                        "interest_amount": 0,
+                                        "total_with_interest": 65,
+                                        "monthly_amount": 21.67
+                                    },
+                                    {
+                                        "id": 12,
+                                        "month": 6,
+                                        "percent": 4.5,
+                                        "sort_order": 1,
+                                        "base_total": 65,
+                                        "interest_amount": 2.93,
+                                        "total_with_interest": 67.93,
+                                        "monthly_amount": 11.32
+                                    }
+                                ],
+                                "translation_language_id": 1
+                            },
+                            {
+                                "key": "online_card_payriff",
+                                "name": "Saytda kartla ödəniş",
+                                "description": "Payriff gateway üzərindən ödəniş",
+                                "type": "online",
+                                "is_online": true,
+                                "requires_redirect": true,
+                                "gateway_code": "payriff",
+                                "icon_path": "https://app.example.com/storage/payment-methods/payriff.png",
+                                "installments": [],
+                                "translation_language_id": 1
+                            }
+                        ]
+                    }
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/order/checkout",
+            "method": "post",
+            "summary": "Sifarişi yarat",
+            "description": "Səbətə əsasən sifarişi yaradır. Endpoint həm auth customer, həm də guest checkout üçün işləyir. Guest checkout zamanı Authorization tələb etmir və səbət guest token ilə müəyyən olunur. Auth customer üçün address_id istifadə oluna bilər və bu halda ayrıca address payload göndərilməməlidir. address_id yoxdursa address nested object kimi və delivery_price_id birlikdə göndərilməlidir. payment_method order_payment_methods cədvəlindəki aktiv method key dəyəridir. Əgər seçilmiş payment method installments dəstəkləyirsə payment_installment_id mütləq göndərilməlidir. Seçilmiş installment order snapshot-da saxlanılır. Online payment method seçilərsə response daxilində payment object də qaytarılır.",
+            "authorization": "Public. Auth olduqda Authorization: Bearer {token} göndərilə bilər. Guest üçün X-Guest-Token header və ya cart_token cookie istifadə olunmalıdır.",
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "address_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Yalnız login olmuş customer üçün istifadə olunur. address_id varsa address payload göndərilməməlidir.",
+                    "example": 18
+                },
+                "address": {
+                    "type": "object",
+                    "required": false,
+                    "description": "address_id yoxdursa nested object kimi göndərilməlidir. Struktur order_addresses cədvəlinin sahələrinə uyğundur.",
+                    "example": {
+                        "type": "shipping",
+                        "label": "Ev",
+                        "recipient_name": "Orxan",
+                        "phone": "994515300050",
+                        "country_id": 1,
+                        "region": "",
+                        "city": "Ganca",
+                        "postal_code": "",
+                        "address_line1": "baki",
+                        "address_line2": "",
+                        "company": "",
+                        "note": ""
+                    }
+                },
+                "delivery_price_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "address_id yoxdursa məcburidir. Aktiv delivery price ID-sidir.",
+                    "example": 2
+                },
+                "payment_method": {
+                    "type": "string",
+                    "required": true,
+                    "description": "order_payment_methods cədvəlindəki aktiv method key dəyəri",
+                    "example": "daxili_kredit"
+                },
+                "payment_installment_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Seçilmiş payment method installments dəstəkləyirsə məcburidir. order_payment_method_installments cədvəlindəki seçilmiş record ID-sidir.",
+                    "example": 4
+                },
+                "comment": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Əlavə qeyd",
+                    "example": "Zəng edin."
+                }
+            },
+            "requestExamples": [
+                {
+                    "title": "Auth customer address_id ilə installment",
+                    "body": {
+                        "address_id": 18,
+                        "delivery_price_id": null,
+                        "payment_method": "daxili_kredit",
+                        "payment_installment_id": 4,
+                        "comment": "Zəng edin."
+                    }
+                },
+                {
+                    "title": "Auth customer address_id ilə online payment",
+                    "body": {
+                        "address_id": 18,
+                        "delivery_price_id": null,
+                        "payment_method": "payriff",
+                        "payment_installment_id": null,
+                        "comment": "Onlayn ödəniş edəcəyəm."
+                    }
+                },
+                {
+                    "title": "Guest checkout installment ilə",
+                    "body": {
+                        "address_id": null,
+                        "address": {
+                            "type": "shipping",
+                            "label": "Ev",
+                            "recipient_name": "Orxan",
+                            "phone": "994515300050",
+                            "country_id": 1,
+                            "region": "",
+                            "city": "Ganca",
+                            "postal_code": "",
+                            "address_line1": "baki",
+                            "address_line2": "",
+                            "company": "",
+                            "note": ""
+                        },
+                        "delivery_price_id": 2,
+                        "payment_method": "daxili_kredit",
+                        "payment_installment_id": 5,
+                        "comment": "9 aya böl."
+                    }
+                },
+                {
+                    "title": "Guest checkout online payment ilə",
+                    "body": {
+                        "address_id": null,
+                        "address": {
+                            "type": "shipping",
+                            "label": "Ev",
+                            "recipient_name": "Orxan",
+                            "phone": "994515300050",
+                            "country_id": 1,
+                            "region": "",
+                            "city": "Ganca",
+                            "postal_code": "",
+                            "address_line1": "baki",
+                            "address_line2": "",
+                            "company": "",
+                            "note": ""
+                        },
+                        "delivery_price_id": 2,
+                        "payment_method": "payriff",
+                        "payment_installment_id": null,
+                        "comment": "Kartla ödəyəcəyəm."
+                    }
+                }
+            ],
+            "responses": {
+                "201": {
+                    "success": true,
+                    "message": "Sifariş uğurla yaradıldı.",
+                    "data": {
+                        "order": {
+                            "id": 101,
+                            "uuid": "5c84fd44-0cb9-4d33-a4ff-8d7103d7eaa1",
+                            "number": "ORD-20260310-ABC123",
+                            "customer": {
+                                "id": 25,
+                                "name": "Orxan",
+                                "email": "orxan@example.com",
+                                "phone": "994515300050"
+                            },
+                            "guest_token": null,
+                            "status": {
+                                "code": "pending",
+                                "text": "Gözləyir"
+                            },
+                            "payment_status": {
+                                "code": "pending",
+                                "text": "Gözləyir"
+                            },
+                            "currency": "AZN",
+                            "totals": {
+                                "subtotal": 48,
+                                "discount_hour_discount": 0,
+                                "promo_discount": 0,
+                                "delivery_price": 5,
+                                "total": 53,
+                                "initial_payment": 10,
+                                "remaining_installment_total": 52.8,
+                                "monthly_amount": 8.8,
+                                "payable_total": 62.8
+                            },
+                            "promo": {
+                                "id": null,
+                                "code": null,
+                                "discount": 0
+                            },
+                            "delivery": {
+                                "delivery_price_id": 2,
+                                "name": "Ganca",
+                                "price": 5
+                            },
+                            "payment_method": {
+                                "key": "daxili_kredit",
+                                "name": "Daxili kredit 2",
+                                "description": "Daxili kredit tesvir 2",
+                                "type": "offline",
+                                "is_online": false,
+                                "requires_redirect": false,
+                                "gateway_code": null,
+                                "icon_path": null,
+                                "installments": [
+                                    {
+                                        "id": 3,
+                                        "month": 3,
+                                        "percent": 0,
+                                        "sort_order": 1
+                                    },
+                                    {
+                                        "id": 4,
+                                        "month": 6,
+                                        "percent": 20,
+                                        "sort_order": 2
+                                    },
+                                    {
+                                        "id": 5,
+                                        "month": 9,
+                                        "percent": 50,
+                                        "sort_order": 3
+                                    }
+                                ],
+                                "selected_installment": {
+                                    "id": 4,
+                                    "month": 6,
+                                    "percent": 20,
+                                    "initial_payment": 10,
+                                    "interest_amount": 8.8,
+                                    "remaining_total_with_interest": 52.8,
+                                    "total_with_interest": 62.8,
+                                    "monthly_amount": 8.8
+                                }
+                            },
+                            "payments": [],
+                            "comment": "Zəng edin.",
+                            "placed_at": "2026-03-10T10:15:00.000000Z",
+                            "paid_at": null,
+                            "cancelled_at": null,
+                            "created_at": "2026-03-10T10:15:00.000000Z",
+                            "updated_at": "2026-03-10T10:15:00.000000Z",
+                            "address": {
+                                "type": "shipping",
+                                "label": "Ev",
+                                "name": "Orxan",
+                                "surname": "Məmmədov",
+                                "passport_fin": "7QX9PL2",
+                                "recipient_name": "Orxan Məmmədov",
+                                "phone": "994515300050",
+                                "country_id": 1,
+                                "country": {
+                                    "id": 1,
+                                    "name": "Azerbaijan",
+                                    "code": "AZ"
+                                },
+                                "region": "",
+                                "city": "Ganca",
+                                "postal_code": "",
+                                "address_line1": "baki",
+                                "address_line2": "",
+                                "company": "",
+                                "note": "",
+                                "created_at": "2026-03-10T10:15:00.000000Z",
+                                "updated_at": "2026-03-10T10:15:00.000000Z"
+                            },
+                            "items": [
+                                {
+                                    "id": 9001,
+                                    "product_id": 33,
+                                    "product_variation_id": 34,
+                                    "sku": "SKU-TEST-001",
+                                    "product_name": "Test product",
+                                    "variation_name": "Default",
+                                    "image": "/storage/order-items/test-product.jpg",
+                                    "qty": 1,
+                                    "original_unit_price": 48,
+                                    "unit_price": 48,
+                                    "line_subtotal": 48,
+                                    "line_discount_hour": 0,
+                                    "line_total": 48,
+                                    "meta": {
+                                        "cart_item_id": 555
+                                    }
+                                }
+                            ],
+                            "status_histories": [
+                                {
+                                    "id": 1,
+                                    "from_status": {
+                                        "code": null,
+                                        "text": null
+                                    },
+                                    "to_status": {
+                                        "code": "pending",
+                                        "text": "Gözləyir"
+                                    },
+                                    "changed_by": null,
+                                    "note": "Sifariş yaradıldı.",
+                                    "created_at": "2026-03-10T10:15:00.000000Z",
+                                    "updated_at": "2026-03-10T10:15:00.000000Z"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "404": {
+                    "success": false,
+                    "message": "Səbət tapılmadı.",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/order/orders/{id}",
+            "method": "get",
+            "summary": "Sifariş detayı",
+            "description": "Sifariş detalını qaytarır. Auth customer üçün yalnız öz sifarişi açılır. Guest sifarişlərdə isə guest token ilə owner yoxlaması edilir. Sifariş route model binding ilə uuid üzrə resolve olunur. Əgər sifariş installment ilə yaradılıbsa payment_method.selected_installment və totals.payable_total də qaytarılır.",
+            "authorization": "Public. Auth olduqda Authorization: Bearer {token} göndərilə bilər. Guest sifarişlərdə X-Guest-Token header və ya cart_token cookie tələb olunur.",
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 101,
+                        "uuid": "5c84fd44-0cb9-4d33-a4ff-8d7103d7eaa1",
+                        "number": "ORD-20260310-ABC123",
+                        "customer": {
+                            "id": 25,
+                            "name": "Aydın",
+                            "email": "aydin@example.com",
+                            "phone": "+994501112233"
+                        },
+                        "guest_token": null,
+                        "status": {
+                            "code": "processing",
+                            "text": "Prosesdə"
+                        },
+                        "payment_status": {
+                            "code": "paid",
+                            "text": "Ödənilib"
+                        },
+                        "currency": "AZN",
+                        "totals": {
+                            "subtotal": 80,
+                            "discount_hour_discount": 10,
+                            "promo_discount": 7,
+                            "delivery_price": 2,
+                            "total": 65,
+                            "initial_payment": 15,
+                            "remaining_installment_total": 52.93,
+                            "monthly_amount": 8.82,
+                            "payable_total": 67.93
+                        },
+                        "promo": {
+                            "id": 7,
+                            "code": "NEWYEAR10",
+                            "discount": 7
+                        },
+                        "delivery": {
+                            "delivery_price_id": 2,
+                            "name": "Nərimanov",
+                            "price": 2
+                        },
+                        "payment_method": {
+                            "key": "birkart",
+                            "name": "BirKart 3/6/12 ay",
+                            "description": "Kartla hissəli ödəniş",
+                            "type": "installment",
+                            "is_online": false,
+                            "requires_redirect": false,
+                            "gateway_code": null,
+                            "icon_path": "https://app.example.com/storage/payment-methods/birkart.png",
+                            "installments": [
+                                {
+                                    "id": 11,
+                                    "month": 3,
+                                    "percent": 0,
+                                    "sort_order": 0
+                                },
+                                {
+                                    "id": 12,
+                                    "month": 6,
+                                    "percent": 4.5,
+                                    "sort_order": 1
+                                }
+                            ],
+                            "selected_installment": {
+                                "id": 12,
+                                "month": 6,
+                                "percent": 4.5,
+                                "initial_payment": 15,
+                                "interest_amount": 2.28,
+                                "remaining_total_with_interest": 52.93,
+                                "total_with_interest": 67.93,
+                                "monthly_amount": 8.82
+                            }
+                        },
+                        "payments": [
+                            {
+                                "id": 5001,
+                                "method_code": "birkart",
+                                "status": {
+                                    "code": "paid",
+                                    "text": "Ödənilib"
+                                },
+                                "amount": 15,
+                                "currency": "AZN",
+                                "provider_reference": "prf_order_123456789",
+                                "provider_payment_id": "txn_987654321",
+                                "redirect_url": null,
+                                "payment_installment": {
+                                    "id": 12,
+                                    "month": 6,
+                                    "percent": 4.5,
+                                    "initial_payment": 15,
+                                    "interest_amount": 2.28,
+                                    "monthly_amount": 8.82
+                                },
+                                "provider_session": [],
+                                "provider_payload": {
+                                    "status": "paid"
+                                },
+                                "paid_at": "2026-03-10T10:17:00.000000Z",
+                                "failed_at": null,
+                                "created_at": "2026-03-10T10:15:30.000000Z",
+                                "updated_at": "2026-03-10T10:17:00.000000Z",
+                                "events": [
+                                    {
+                                        "id": 7001,
+                                        "event_type": "initiated",
+                                        "provider": "payriff",
+                                        "payload": {
+                                            "order_number": "ORD-20260310-ABC123"
+                                        },
+                                        "occurred_at": "2026-03-10T10:15:30.000000Z",
+                                        "created_at": "2026-03-10T10:15:30.000000Z"
+                                    },
+                                    {
+                                        "id": 7002,
+                                        "event_type": "paid",
+                                        "provider": "payriff",
+                                        "payload": {
+                                            "provider_reference": "prf_order_123456789"
+                                        },
+                                        "occurred_at": "2026-03-10T10:17:00.000000Z",
+                                        "created_at": "2026-03-10T10:17:00.000000Z"
+                                    }
+                                ]
+                            }
+                        ],
+                        "comment": "Axşam çatdırın.",
+                        "placed_at": "2026-03-10T10:15:00.000000Z",
+                        "paid_at": "2026-03-10T10:17:00.000000Z",
+                        "cancelled_at": null,
+                        "created_at": "2026-03-10T10:15:00.000000Z",
+                        "updated_at": "2026-03-10T10:17:00.000000Z",
+                        "address": {
+                            "type": "shipping",
+                            "label": "Ev",
+                            "name": "Aydın",
+                            "surname": "Əliyev",
+                            "passport_fin": "7QX9PL2",
+                            "recipient_name": "Aydın Əliyev",
+                            "phone": "+994501112233",
+                            "country_id": 1,
+                            "country": {
+                                "id": 1,
+                                "name": "Azerbaijan",
+                                "code": "AZ"
+                            },
+                            "region": "Nərimanov",
+                            "city": "Bakı",
+                            "postal_code": "AZ1000",
+                            "address_line1": "Nizami 10",
+                            "address_line2": "",
+                            "company": "",
+                            "note": "",
+                            "created_at": "2026-03-10T10:15:00.000000Z",
+                            "updated_at": "2026-03-10T10:15:00.000000Z"
+                        },
+                        "items": [
+                            {
+                                "id": 9001,
+                                "product_id": 10,
+                                "product_variation_id": 1001,
+                                "sku": "SNK-42-BLK",
+                                "product_name": "Sneaker",
+                                "variation_name": "42 / Qara",
+                                "image": "/storage/order-items/sneaker-black-42.jpg",
+                                "qty": 1,
+                                "original_unit_price": 80,
+                                "unit_price": 70,
+                                "line_subtotal": 80,
+                                "line_discount_hour": 10,
+                                "line_total": 70,
+                                "meta": {
+                                    "cart_item_id": 444
+                                }
+                            }
+                        ],
+                        "status_histories": [
+                            {
+                                "id": 1,
+                                "from_status": {
+                                    "code": null,
+                                    "text": null
+                                },
+                                "to_status": {
+                                    "code": "pending",
+                                    "text": "Gözləyir"
+                                },
+                                "changed_by": null,
+                                "note": "Sifariş yaradıldı.",
+                                "created_at": "2026-03-10T10:15:00.000000Z",
+                                "updated_at": "2026-03-10T10:15:00.000000Z"
+                            },
+                            {
+                                "id": 2,
+                                "from_status": {
+                                    "code": "pending",
+                                    "text": "Gözləyir"
+                                },
+                                "to_status": {
+                                    "code": "processing",
+                                    "text": "Prosesdə"
+                                },
+                                "changed_by": {
+                                    "id": 1,
+                                    "name": "Admin User",
+                                    "email": "admin@example.com"
+                                },
+                                "note": "Ödəniş təsdiqləndi.",
+                                "created_at": "2026-03-10T10:18:00.000000Z",
+                                "updated_at": "2026-03-10T10:18:00.000000Z"
+                            }
+                        ]
+                    }
+                },
+                "404": {
+                    "success": false,
+                    "message": "Sifariş tapılmadı.",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/payments/callback/{gateway}",
+            "method": "post",
+            "summary": "Ödəniş callback",
+            "description": "Bank və ya provayder callback-i qəbul edir. gateway provayder kodudur. Mümkün dəyərlər: kapitalbank, payriff. Provider payload-u normalizasiya olunub order_payments və orders cədvəllərində payment status yenilənir.",
+            "authorization": "Public. Provider server-to-server callback göndərir.",
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "payload": {
+                    "type": "object",
+                    "required": false,
+                    "description": "Provayderdən gələn callback payload-u. Struktur gateway-dən asılıdır.",
+                    "example": {
+                        "orderId": "prf_order_123456789",
+                        "transactionId": "txn_987654321",
+                        "paymentStatus": "APPROVED",
+                        "metadata": {
+                            "order_uuid": "5c84fd44-0cb9-4d33-a4ff-8d7103d7eaa1",
+                            "order_number": "ORD-20260310-ABC123",
+                            "order_payment_id": 5001
+                        }
+                    }
+                },
+                "status": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Bəzi gateway-lərdə normalizasiya üçün istifadə olunan status dəyəri.",
+                    "example": "paid"
+                },
+                "provider_reference": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Provider reference və ya order id.",
+                    "example": "prf_order_123456789"
+                },
+                "provider_payment_id": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Provider transaction və ya payment id.",
+                    "example": "txn_987654321"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Callback qəbul olundu.",
+                    "data": {
+                        "status": "OK"
+                    }
+                },
+                "400": {
+                    "success": false,
+                    "message": "ERROR",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        }
+    ]
+}

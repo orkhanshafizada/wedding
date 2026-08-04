@@ -1,0 +1,129 @@
+{
+    "tag": "Favorites",
+    "description": "Favorites APIs. For authenticated customers, favorites work by customer_id. For guests, favorites work only by X-Guest-Token.\n\nGuest requests use only the X-Guest-Token header.\nX-Favorite-Token, Favorite-Token, favorite_token cookie and other legacy token mechanisms are not used.\n\nGuest token is created from the common Settings API endpoint: POST /v1/guest-token.\nThe same X-Guest-Token is used for Cart, Compare and Favorites.\n\nFavorites are managed only by product variation through product_variation_id. The toggle endpoint adds the variation if it does not exist in favorites, and removes it if it already exists.\n\nDuring Login/Register, if X-Guest-Token is sent, guest favorites can be merged into the customer account.",
+    "basePathNote": "Base path: /v1",
+    "headers": {
+        "X-Guest-Token": {
+            "type": "string",
+            "required": false,
+            "description": "The only token header for guest Cart, Compare and Favorites. It is not sent in the request body and is used only as a header.",
+            "example": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP"
+        },
+        "Authorization": {
+            "type": "string",
+            "required": false,
+            "description": "Bearer token for authenticated customers using customer-api guard.",
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/favorites",
+            "method": "get",
+            "summary": "Favorites list",
+            "description": "Returns paginated favorite items.\nFor authenticated customers, items are returned by customer_id.\nFor guests, items are returned only by X-Guest-Token.\nIf no token is sent for a guest request, an empty list is returned.\nDefault per_page is 20.\nRecommended flow: create a guest token once with POST /v1/guest-token and send it as X-Guest-Token in all guest Cart, Compare and Favorites requests.",
+            "authorization": false,
+            "query": {
+                "page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Page number",
+                    "example": 1
+                },
+                "per_page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Items per page. Minimum 1, maximum 100, default 20.",
+                    "example": 20
+                }
+            },
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Favorites loaded successfully",
+                    "data": {
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "items": [
+                            {
+                                "id": 15,
+                                "product_variation_id": 101,
+                                "created_at": "2026-02-13T08:30:00.000000Z",
+                                "updated_at": "2026-02-13T08:30:00.000000Z"
+                            }
+                        ],
+                        "pagination": {
+                            "current_page": 1,
+                            "last_page": 1,
+                            "per_page": 20,
+                            "total": 1
+                        }
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/favorites/toggle",
+            "method": "post",
+            "summary": "Toggle favorite item",
+            "description": "Sends product_variation_id.\nFor authenticated customers, favorites work by customer_id.\nFor guests, favorites work by X-Guest-Token.\nThe response returns action: created or deleted.\n\nRecommended flow: create a guest token once with POST /v1/guest-token and send it as X-Guest-Token.\nIf a guest request does not include a token, backend can generate a token and return it as data.token. The client must send that token as X-Guest-Token in the next guest Cart, Compare and Favorites requests.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "product_variation_id": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Product variation ID to toggle.",
+                    "example": 101
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Removed from favorites",
+                    "data": {
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "action": "deleted",
+                        "favorite": null
+                    }
+                },
+                "201": {
+                    "success": true,
+                    "message": "Added to favorites",
+                    "data": {
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP",
+                        "action": "created",
+                        "favorite": {
+                            "id": 15,
+                            "product_variation_id": 101,
+                            "created_at": "2026-02-13T08:30:00.000000Z",
+                            "updated_at": "2026-02-13T08:30:00.000000Z"
+                        }
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        }
+    ]
+}

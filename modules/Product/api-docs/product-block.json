@@ -1,0 +1,132 @@
+{
+    "tag": "Product Block",
+    "description": "Product Block API - Aktiv product block-ları və hər block üçün uyğun məhsulları əldə etmək üçün API-lər.",
+    "basePathNote": "Base path: /v1. Bu modulun endpoint-ləri /product/blocks/* altında işləyir. Authorization tələb olunmur (public).",
+    "headers": {
+        "Accept-Language": {
+            "type": "string",
+            "required": false,
+            "description": "Dil seçimi üçün locale. Tərcümələr bu dildə qaytarılır (app()->getLocale()).",
+            "example": "az"
+        }
+    },
+    "cookie": {},
+    "endpoints": [
+        {
+            "path": "/product/blocks",
+            "method": "get",
+            "summary": "Bütün aktiv block-lar",
+            "description": "Yalnız aktiv product block-ları sort_order-ə görə qaytarır və hər block üçün uyğun məhsullar da əlavə olunur.",
+            "authorization": "Public: Authorization tələb olunmur",
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Product blocks loaded successfully",
+                    "data": [
+                        {
+                            "block": {
+                                "id": 1,
+                                "type": "newest",
+                                "title": "Yeni Məhsullar",
+                                "limit": 12,
+                                "sort_order": 0,
+                                "menu": null
+                            },
+                            "products": [
+                                {
+                                    "id": 15,
+                                    "name": "iPhone 15 Pro Max",
+                                    "slug": "iphone-15-pro-max",
+                                    "image": "http://example.com/storage/products/iphone15.jpg"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "500": {
+                    "success": false,
+                    "message": "Failed to load product blocks",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/product/blocks/filter",
+            "method": "get",
+            "summary": "Filter (type və ya menu_id)",
+            "description": "Bu endpoint yalnız bir parametr ilə işləməlidir: ya type, ya da menu_id. İkisi birlikdə göndərilməməlidir. Heç biri göndərilməzsə validation error qaytarır.",
+            "authorization": "Public: Authorization tələb olunmur",
+            "query": {
+                "type": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Block type. newest | popular | most_sale",
+                    "example": "newest"
+                },
+                "menu_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Menu (category) ID. Category block-lar bu parametr ilə çağırılır.",
+                    "example": 5
+                }
+            },
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Product blocks loaded successfully",
+                    "data": [
+                        {
+                            "block": {
+                                "id": 2,
+                                "type": "category",
+                                "title": "Telefonlar",
+                                "limit": 10,
+                                "sort_order": 1,
+                                "menu": {
+                                    "id": 5,
+                                    "name": "Telefonlar"
+                                }
+                            },
+                            "products": [
+                                {
+                                    "id": 25,
+                                    "name": "Samsung Galaxy S24 Ultra",
+                                    "slug": "samsung-galaxy-s24-ultra",
+                                    "image": "http://example.com/storage/products/s24ultra.jpg"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "200_empty": {
+                    "success": true,
+                    "message": "No product blocks found matching the criteria",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "validation.required_without (and 1 more error)",
+                    "errors": {
+                        "type": [
+                            "validation.required_without"
+                        ],
+                        "menu_id": [
+                            "validation.required_without"
+                        ]
+                    },
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Failed to load product blocks",
+                    "data": []
+                }
+            }
+        }
+    ]
+}

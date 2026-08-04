@@ -1,0 +1,1061 @@
+{
+    "tag": "Customer",
+    "description": "Customer profil və ünvanlar ilə bağlı API-lər.",
+    "basePathNote": "Base path: /v1. Bu modulun endpoint-ləri /customer/* altında işləyir. Authorization tələb edən endpoint-lərdə header: Authorization: Bearer {token}.",
+    "headers": {
+        "Authorization": {
+            "type": "string",
+            "required": false,
+            "description": "Auth customer üçün Bearer token. Bu header göndərilməyən endpoint-lər 401 qaytara bilər.",
+            "example": "Bearer 1|4WHKo6K0AZNGiPiL9QWs1qXZ2CwnYbaCQyfUYr8M1f224977"
+        },
+        "X-Cart-Token": {
+            "type": "string",
+            "required": false,
+            "description": "Guest cart token. Login/Register zamanı göndərilərsə guest cart customer cart-a merge oluna bilər. Token yalnız header/cookie ilə göndərilir (body-də yox). Prioritet 1.",
+            "example": "eE2xw7h3pK0mQ1...40chars"
+        },
+        "Cart-Token": {
+            "type": "string",
+            "required": false,
+            "description": "X-Cart-Token alternativ header adı. X-Cart-Token boşdursa oxunur. Prioritet 2.",
+            "example": "eE2xw7h3pK0mQ1...40chars"
+        }
+    },
+    "cookie": {
+        "cart_token": {
+            "type": "string",
+            "required": false,
+            "description": "Guest cart token cookie-dən də oxuna bilər (header-lər boşdursa). Prioritet 3.",
+            "example": "eE2xw7h3pK0mQ1...40chars"
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/customer/me",
+            "method": "get",
+            "summary": "Mən",
+            "description": "Aktiv Authorization token-ə bağlı customer məlumatlarını qaytarır.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 1,
+                        "name": "John",
+                        "surname": "Doe",
+                        "email": "user@example.com",
+                        "email_verified_at": "2026-02-13T10:00:00.000000Z",
+                        "phone": "0511111111",
+                        "country_id": 1,
+                        "avatar_path": "customers/1/avatars/avatar.jpg",
+                        "is_active": true,
+                        "created_at": "2026-02-13T10:00:00.000000Z",
+                        "updated_at": "2026-02-13T10:00:00.000000Z"
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/profile",
+            "method": "put",
+            "summary": "Profil yenilə",
+            "description": "name/surname/email/phone/country_id yenilənir; istəyə görə password da yenilənə bilər. password göndərilərsə backend Hash::make edir. password göndərilməzsə dəyişmir.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "name": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Ad",
+                    "example": "John"
+                },
+                "surname": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Soyad",
+                    "example": "Doe"
+                },
+                "email": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Email (unikal)",
+                    "example": "user@example.com"
+                },
+                "phone": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Telefon",
+                    "example": "0511111111"
+                },
+                "country_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Ölkə ID",
+                    "example": 1
+                },
+                "password": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Yeni şifrə",
+                    "example": "Ee12345678!@#"
+                },
+                "password_confirmation": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Yeni şifrənin təkrarı",
+                    "example": "Ee12345678!@#"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 1,
+                        "name": "John",
+                        "surname": "Doe",
+                        "email": "user@example.com",
+                        "email_verified_at": "2026-02-13T10:00:00.000000Z",
+                        "phone": "0511111111",
+                        "country_id": 1,
+                        "avatar_path": "customers/1/avatars/avatar.jpg",
+                        "is_active": true,
+                        "created_at": "2026-02-13T10:00:00.000000Z",
+                        "updated_at": "2026-02-13T10:00:00.000000Z"
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/avatar",
+            "method": "post",
+            "summary": "Avatar yenilə",
+            "description": "Customer avatarını yeniləyir (multipart/form-data). Avatar URL ilə yox, file input kimi göndərilir. Fayl public diskə yüklənir.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": true,
+            "formBody": {
+                "avatar": {
+                    "type": "file",
+                    "required": true,
+                    "description": "Şəkil faylı (multipart/form-data field: avatar)",
+                    "example": "(binary)"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 1,
+                        "name": "John",
+                        "surname": "Doe",
+                        "email": "user@example.com",
+                        "email_verified_at": "2026-02-13T10:00:00.000000Z",
+                        "phone": "0511111111",
+                        "country_id": 1,
+                        "avatar_path": "customers/1/avatars/avatar.jpg",
+                        "is_active": true,
+                        "created_at": "2026-02-13T10:00:00.000000Z",
+                        "updated_at": "2026-02-13T10:00:00.000000Z"
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/addresses",
+            "method": "get",
+            "summary": "Ünvanlar siyahısı",
+            "description": "Aktiv customer-ın ünvanlarını paginate edərək qaytarır. Filter: type (billing|shipping), status (1|0). Default per_page=20 (max 100).",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {
+                "type": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Filtr: billing | shipping",
+                    "example": "shipping"
+                },
+                "status": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Filtr: 1 aktiv, 0 deaktiv",
+                    "example": 1
+                },
+                "per_page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Səhifədə element sayı (max 100)",
+                    "example": 20
+                },
+                "page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Səhifə nömrəsi",
+                    "example": 1
+                }
+            },
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": [
+                        {
+                            "id": 10,
+                            "type": "shipping",
+                            "label": "Ev",
+                            "recipient_name": "John Doe",
+                            "phone": "0511111111",
+                            "country_id": 1,
+                            "delivery_price_id": 1,
+                            "region": "Absheron",
+                            "city": "Baku",
+                            "postal_code": "AZ1000",
+                            "address_line1": "Nizami küçəsi 10",
+                            "address_line2": "Mənzil 25",
+                            "company": null,
+                            "note": "Zəng edin",
+                            "is_default": true,
+                            "status": true,
+                            "sort_order": 0,
+                            "created_at": "2026-02-18T10:00:00.000000Z",
+                            "updated_at": "2026-02-18T10:00:00.000000Z"
+                        }
+                    ]
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/addresses",
+            "method": "post",
+            "summary": "Ünvan əlavə et",
+            "description": "Yeni ünvan yaradır. is_default=true göndərilərsə həmin type üzrə əvvəlki default ünvanlar avtomatik ləğv olunur.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "type": {
+                    "type": "text",
+                    "required": true,
+                    "description": "billing | shipping",
+                    "example": "shipping"
+                },
+                "label": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Ünvanın başlığı",
+                    "example": "Ev"
+                },
+                "recipient_name": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Qəbul edən şəxsin adı",
+                    "example": "John Doe"
+                },
+                "phone": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Telefon",
+                    "example": "0511111111"
+                },
+                "country_id": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Ölkə ID (countries.id)",
+                    "example": 1
+                },
+                "delivery_price_id": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Delivery price ID (City)",
+                    "example": 1
+                },
+                "region": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Rayon/Region",
+                    "example": "Absheron"
+                },
+                "city": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Şəhər",
+                    "example": "Baku"
+                },
+                "postal_code": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Poçt kodu",
+                    "example": "AZ1000"
+                },
+                "address_line1": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Ünvan (1-ci sətir)",
+                    "example": "Nizami küçəsi 10"
+                },
+                "address_line2": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Ünvan (2-ci sətir)",
+                    "example": "Mənzil 25"
+                },
+                "company": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Şirkət",
+                    "example": ""
+                },
+                "note": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Qeyd (kuryer üçün)",
+                    "example": "Zəng edin"
+                },
+                "is_default": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Əsas ünvan kimi seç",
+                    "example": true
+                },
+                "status": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Aktivlik statusu",
+                    "example": true
+                },
+                "sort_order": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Sıralama",
+                    "example": 0
+                }
+            },
+            "responses": {
+                "201": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 10,
+                        "type": "shipping",
+                        "label": "Ev",
+                        "recipient_name": "John Doe",
+                        "phone": "0511111111",
+                        "country_id": 1,
+                        "delivery_price_id": 1,
+                        "region": "Absheron",
+                        "city": "Baku",
+                        "postal_code": "AZ1000",
+                        "address_line1": "Nizami küçəsi 10",
+                        "address_line2": "Mənzil 25",
+                        "company": null,
+                        "note": "Zəng edin",
+                        "is_default": true,
+                        "status": true,
+                        "sort_order": 0,
+                        "created_at": "2026-02-18T10:00:00.000000Z",
+                        "updated_at": "2026-02-18T10:00:00.000000Z"
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/addresses/{id}",
+            "method": "get",
+            "summary": "Ünvan detayı",
+            "description": "Route param: {id} ünvan ID. Aktiv customer-a aid olan ünvanın məlumatlarını qaytarır.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 10,
+                        "type": "shipping",
+                        "label": "Ev",
+                        "recipient_name": "John Doe",
+                        "phone": "0511111111",
+                        "country_id": 1,
+                        "delivery_price_id": 1,
+                        "region": "Absheron",
+                        "city": "Baku",
+                        "postal_code": "AZ1000",
+                        "address_line1": "Nizami küçəsi 10",
+                        "address_line2": "Mənzil 25",
+                        "company": null,
+                        "note": "Zəng edin",
+                        "is_default": true,
+                        "status": true,
+                        "sort_order": 0,
+                        "created_at": "2026-02-18T10:00:00.000000Z",
+                        "updated_at": "2026-02-18T10:00:00.000000Z"
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/addresses/{id}",
+            "method": "put",
+            "summary": "Ünvan yenilə",
+            "description": "Route param: {id} ünvan ID. Ünvan məlumatlarını yeniləyir.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "type": {
+                    "type": "text",
+                    "required": false,
+                    "description": "billing | shipping",
+                    "example": "shipping"
+                },
+                "label": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Ünvanın başlığı",
+                    "example": "Ev"
+                },
+                "recipient_name": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Qəbul edən şəxs",
+                    "example": "John Doe"
+                },
+                "phone": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Telefon",
+                    "example": "0511111111"
+                },
+                "country_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Ölkə ID (countries.id)",
+                    "example": 1
+                },
+                "delivery_price_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Delivery ID (City)",
+                    "example": 1
+                },
+                "region": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Rayon/Region",
+                    "example": "Absheron"
+                },
+                "city": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Şəhər",
+                    "example": "Baku"
+                },
+                "postal_code": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Poçt kodu",
+                    "example": "AZ1000"
+                },
+                "address_line1": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Ünvan (1-ci sətir)",
+                    "example": "Nizami küçəsi 10"
+                },
+                "address_line2": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Ünvan (2-ci sətir)",
+                    "example": "Mənzil 25"
+                },
+                "company": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Şirkət",
+                    "example": ""
+                },
+                "note": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Qeyd",
+                    "example": "Zəng edin"
+                },
+                "is_default": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Əsas ünvan kimi seç",
+                    "example": true
+                },
+                "status": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Aktivlik statusu",
+                    "example": true
+                },
+                "sort_order": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Sıralama",
+                    "example": 0
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 10,
+                        "type": "shipping",
+                        "label": "Ev",
+                        "recipient_name": "John Doe",
+                        "phone": "0511111111",
+                        "country_id": 1,
+                        "delivery_price_id": 1,
+                        "region": "Absheron",
+                        "city": "Baku",
+                        "postal_code": "AZ1000",
+                        "address_line1": "Nizami küçəsi 10",
+                        "address_line2": "Mənzil 25",
+                        "company": null,
+                        "note": "Zəng edin",
+                        "is_default": true,
+                        "status": true,
+                        "sort_order": 0,
+                        "created_at": "2026-02-18T10:00:00.000000Z",
+                        "updated_at": "2026-02-18T10:00:00.000000Z"
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/addresses/{id}",
+            "method": "delete",
+            "summary": "Ünvan sil",
+            "description": "Route param: {id} ünvan ID. Aktiv customer-a aid olan ünvanı silir.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": []
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/addresses/{id}/default",
+            "method": "patch",
+            "summary": "Əsas ünvan seç",
+            "description": "Route param: {id} ünvan ID. Seçilən ünvanı həmin type üzrə əsas (default) edir.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 10,
+                        "type": "shipping",
+                        "label": "Ev",
+                        "recipient_name": "John Doe",
+                        "phone": "0511111111",
+                        "country_id": 1,
+                        "delivery_price_id": 1,
+                        "region": "Absheron",
+                        "city": "Baku",
+                        "postal_code": "AZ1000",
+                        "address_line1": "Nizami küçəsi 10",
+                        "address_line2": "Mənzil 25",
+                        "company": null,
+                        "note": "Zəng edin",
+                        "is_default": true,
+                        "status": true,
+                        "sort_order": 0,
+                        "created_at": "2026-02-18T10:00:00.000000Z",
+                        "updated_at": "2026-02-18T10:00:00.000000Z"
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/orders",
+            "method": "get",
+            "summary": "Sifarişlər tarixçəsi",
+            "description": "Auth customer üçün sifarişlər tarixçəsini qaytarır. Filter: status və axtarış üçün q (order number və ya id).",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {
+                "per_page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Səhifədə element sayı (max 100)",
+                    "example": 20
+                },
+                "page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Səhifə nömrəsi",
+                    "example": 1
+                },
+                "status": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Filtr: order status (məs: pending, processing, completed, canceled və s.)",
+                    "example": "processing"
+                },
+                "q": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Axtarış: order number (LIKE) və ya id",
+                    "example": "ORD-2026"
+                }
+            },
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": [
+                        {
+                            "id": 101,
+                            "uuid": "5c84fd44-0cb9-4d33-a4ff-8d7103d7eaa1",
+                            "number": "ORD-20260220-000101",
+                            "status": {
+                                "code": "processing",
+                                "text": "Prosesdə"
+                            },
+                            "payment_status": {
+                                "code": "pending",
+                                "text": "Gözləyir"
+                            },
+                            "currency": "AZN",
+                            "totals": {
+                                "subtotal": 50,
+                                "discount_hour_discount": 0,
+                                "promo_discount": 0,
+                                "delivery_price": 5,
+                                "total": 55,
+                                "initial_payment": 0,
+                                "remaining_installment_total": 0,
+                                "monthly_amount": 0,
+                                "payable_total": 55
+                            },
+                            "placed_at": "2026-02-20T10:00:00.000000Z"
+                        }
+                    ]
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/customer/orders/{id}",
+            "method": "get",
+            "summary": "Sifariş detayı (customer)",
+            "description": "Auth customer üçün sifariş detalını qaytarır. Sifariş başqa customer-a aiddirsə 404 qaytarır.",
+            "authorization": "Required: Authorization: Bearer {token}",
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 101,
+                        "uuid": "5c84fd44-0cb9-4d33-a4ff-8d7103d7eaa1",
+                        "number": "ORD-20260220-000101",
+                        "customer": {
+                            "id": 1,
+                            "name": "Aydın",
+                            "email": "a@example.com",
+                            "phone": "+994501112233"
+                        },
+                        "guest_token": null,
+                        "status": {
+                            "code": "processing",
+                            "text": "Prosesdə"
+                        },
+                        "payment_status": {
+                            "code": "pending",
+                            "text": "Gözləyir"
+                        },
+                        "currency": "AZN",
+                        "totals": {
+                            "subtotal": 50,
+                            "discount_hour_discount": 0,
+                            "promo_discount": 0,
+                            "delivery_price": 5,
+                            "total": 55,
+                            "initial_payment": 0,
+                            "remaining_installment_total": 0,
+                            "monthly_amount": 0,
+                            "payable_total": 55
+                        },
+                        "promo": {
+                            "id": null,
+                            "code": null,
+                            "discount": 0
+                        },
+                        "delivery": {
+                            "delivery_price_id": 1,
+                            "name": "Bakı daxili çatdırılma",
+                            "price": 5
+                        },
+                        "payment_method": {
+                            "key": "online_card",
+                            "name": "Online card",
+                            "description": null,
+                            "type": "online",
+                            "is_online": true,
+                            "requires_redirect": true,
+                            "gateway_code": "payriff",
+                            "icon_path": null,
+                            "installments": [],
+                            "selected_installment": null
+                        },
+                        "payments": [],
+                        "comment": "Zəng edin.",
+                        "placed_at": "2026-02-20T10:00:00.000000Z",
+                        "paid_at": null,
+                        "cancelled_at": null,
+                        "created_at": "2026-02-20T10:00:00.000000Z",
+                        "updated_at": "2026-02-20T10:00:00.000000Z",
+                        "address": {
+                            "type": "shipping",
+                            "label": "Ev",
+                            "name": "Aydın",
+                            "surname": "Əliyev",
+                            "passport_fin": "7QX9PL2",
+                            "recipient_name": "Aydın Əliyev",
+                            "phone": "+994501112233",
+                            "country_id": 1,
+                            "country": {
+                                "id": 1,
+                                "name": "Azerbaijan",
+                                "code": "AZ"
+                            },
+                            "region": "Nərimanov",
+                            "city": "Bakı",
+                            "postal_code": "AZ1000",
+                            "address_line1": "Nizami 10",
+                            "address_line2": "",
+                            "company": "",
+                            "note": "",
+                            "created_at": "2026-02-20T10:00:00.000000Z",
+                            "updated_at": "2026-02-20T10:00:00.000000Z"
+                        },
+                        "items": [
+                            {
+                                "id": 1,
+                                "product_id": 10,
+                                "product_variation_id": 55,
+                                "sku": "SKU-55",
+                                "product_name": "Sneaker",
+                                "variation_name": "42 / Qara",
+                                "image": "/storage/order-items/sneaker-black-42.jpg",
+                                "qty": 2,
+                                "original_unit_price": 25,
+                                "unit_price": 25,
+                                "line_subtotal": 50,
+                                "line_discount_hour": 0,
+                                "line_total": 50,
+                                "meta": {
+                                    "cart_item_id": 10
+                                }
+                            }
+                        ],
+                        "status_histories": []
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        }
+    ]
+}

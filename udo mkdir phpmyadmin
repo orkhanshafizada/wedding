@@ -1,0 +1,17 @@
+[0;1;32m●[0m nginx.service - A high performance web server and a reverse proxy server
+     Loaded: loaded (]8;;file://ubuntu-8gb-hel1-1/usr/lib/systemd/system/nginx.service/usr/lib/systemd/system/nginx.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Mon 2026-04-13 14:16:32 UTC; 6 days ago
+       Docs: ]8;;man:nginx(8)man:nginx(8)]8;;
+   Main PID: 118073 (nginx)
+      Tasks: 5 (limit: 9255)
+     Memory: 8.3M (peak: 17.5M)
+        CPU: 4.882s
+     CGroup: /system.slice/nginx.service
+             ├─[0;38;5;245m118073 "nginx: master process /usr/sbin/nginx -g daemon on; master_process on;"[0m
+             ├─[0;38;5;245m118074 "nginx: worker process"[0m
+             ├─[0;38;5;245m118075 "nginx: worker process"[0m
+             ├─[0;38;5;245m118077 "nginx: worker process"[0m
+             └─[0;38;5;245m118078 "nginx: worker process"[0m
+
+Apr 13 14:16:32 ubuntu-8gb-hel1-1 systemd[1]: Starting nginx.service - A high performance web server and a reverse proxy server...
+Apr 13 14:16:32 ubuntu-8gb-hel1-1 systemd[1]: Started nginx.service - A high performance web server and a reverse proxy server.

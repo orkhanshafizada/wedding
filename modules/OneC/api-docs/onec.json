@@ -1,0 +1,724 @@
+{
+    "tag": "1C Integration",
+    "description": "OpenCart tvim.az layihəsində işləyən 1C REST endpoint-lərinin Laravel (ayti e-commerce) üzərinə 1:1 köçürülmüş versiyası. URL-lər və HTTP method-lar dəyişmir. Response format OpenCart ApiController::sendResponse() ilə eynidir: {success: 1|0, error: [], data: ...}.",
+    "basePathNote": "Bütün endpoint-lər public URL-dadır, amma Authorization Bearer token tələb edir (ONEC_BEARER_TOKENS). Base path: /api/1c. JSON body-lər OpenCart getPost() davranışı kimi yoxlanır: body array/object olmalıdır və boş olmamalıdır (əks halda 400). OPTIONS preflight 200 qaytarır.",
+    "headers": {
+        "Authorization": {
+            "type": "text",
+            "required": true,
+            "description": "Bearer token. OpenCart validateToken() davranışının Laravel analoqu. Token-lər env/config-dən oxunur: ONEC_BEARER_TOKENS (vergüllə).",
+            "example": "Bearer 44pyDpQTx3wYkLMW58mVpYSEGayN5K2mKavOoC2ydQXcoEc6HTl2K2WPj7gAfSwF..."
+        },
+        "Content-Type": {
+            "type": "text",
+            "required": true,
+            "description": "JSON payload üçün application/json göndərilməlidir.",
+            "example": "application/json"
+        },
+        "Origin": {
+            "type": "text",
+            "required": false,
+            "description": "Əgər göndərilərsə, CORS header-lar OpenCart kimi echo edilir (Access-Control-Allow-*).",
+            "example": "https://1c.example.local"
+        },
+        "X-Request-Id": {
+            "type": "text",
+            "required": false,
+            "description": "Log-lar üçün request correlation id. ActivityLogService request_id kimi saxlayır.",
+            "example": "req_01HTX0KZ4G7E2J8WZQ"
+        }
+    },
+    "cookie": {},
+    "endpoints": [
+        {
+            "path": "/1c/category/add",
+            "method": "post",
+            "summary": "Category add (bulk)",
+            "description": "1C kateqoriyaları göndərir. OpenCart-də category GUID kimi saxlanırdı. Laravel-də menus cədvəlinə yazılır (menus.type=categories, uuid=GUID). Body array olmalıdır.",
+            "authorization": "Authorization: Bearer <token>",
+            "query": {},
+            "pathParams": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Array of category objects.",
+                "example": [
+                    {
+                        "id": "b0b9c0a8-1f2b-4f8c-9c7c-00b1a9b1a111",
+                        "parentId": "00000000-0000-0000-0000-000000000000",
+                        "name": "Elektronika"
+                    },
+                    {
+                        "id": "c0c9d0a8-1f2b-4f8c-9c7c-00b1a9b1a222",
+                        "parentId": "b0b9c0a8-1f2b-4f8c-9c7c-00b1a9b1a111",
+                        "name": "Telefonlar"
+                    }
+                ]
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                },
+                "403": {
+                    "success": 0,
+                    "error": [
+                        "error_permission"
+                    ],
+                    "data": []
+                },
+                "405": {
+                    "success": 0,
+                    "error": [
+                        "Method Not Allowed"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/category/edit/{category_id}",
+            "method": "put",
+            "summary": "Category edit (single)",
+            "description": "category_id route param OpenCart-də GUID idi. Laravel-də də GUID kimi qəbul edilir (menus.uuid). Əgər GUID tapılmazsa 404 qaytarır.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "category_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Category GUID (OpenCart category.GUID).",
+                    "example": "c0c9d0a8-1f2b-4f8c-9c7c-00b1a9b1a222"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Category object. (id göndərilməsə belə route param ilə override edilir).",
+                "example": {
+                    "parentId": "b0b9c0a8-1f2b-4f8c-9c7c-00b1a9b1a111",
+                    "name": "Telefonlar (yenilənib)"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_category"
+                    ],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/category/delete/{category_id}",
+            "method": "delete",
+            "summary": "Category delete",
+            "description": "GUID üzrə menu silinir (soft/hard davranış Menu modelinə bağlıdır). Tapılmasa 404.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "category_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Category GUID.",
+                    "example": "c0c9d0a8-1f2b-4f8c-9c7c-00b1a9b1a222"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": false,
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_category"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/manufacturer/add",
+            "method": "post",
+            "summary": "Manufacturer add (bulk)",
+            "description": "OpenCart manufacturer GUID idi. Laravel-də brend ProductFilterValue kimi saxlanır (filter=Brand). Body array olmalıdır.",
+            "authorization": "Authorization: Bearer <token>",
+            "query": {},
+            "pathParams": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Array of manufacturer objects.",
+                "example": [
+                    {
+                        "id": "m-uuid-bosch-111",
+                        "name": "Bosch"
+                    },
+                    {
+                        "id": "m-uuid-emtop-222",
+                        "name": "Emtop"
+                    }
+                ]
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                },
+                "403": {
+                    "success": 0,
+                    "error": [
+                        "error_permission"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/manufacturer/edit/{manufacturer_id}",
+            "method": "put",
+            "summary": "Manufacturer edit",
+            "description": "manufacturer_id route param = GUID. Tapılmasa 404.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "manufacturer_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Manufacturer GUID.",
+                    "example": "m-uuid-bosch-111"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Manufacturer object (name).",
+                "example": {
+                    "name": "Bosch (Updated)"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_manufacturer"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/manufacturer/delete/{manufacturer_id}",
+            "method": "delete",
+            "summary": "Manufacturer delete",
+            "description": "Brend (ProductFilterValue) GUID üzrə silinir. Tapılmasa 404.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "manufacturer_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Manufacturer GUID.",
+                    "example": "m-uuid-bosch-111"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": false,
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_manufacturer"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/product/add",
+            "method": "post",
+            "summary": "Product add (bulk)",
+            "description": "1C məhsul göndərir. Laravel-də əvvəl products table-də Product yaradılır (uuid=GUID), sonra həmin məhsul üçün 1 variation yaradılır/yenilənir. Body array olmalıdır. unit_id/unit_value qəbul edilmir (1C artıq göndərmir).",
+            "authorization": "Authorization: Bearer <token>",
+            "query": {},
+            "pathParams": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Array of product objects.",
+                "example": [
+                    {
+                        "id": "p-uuid-iphone-15-111",
+                        "name": "iPhone 15 128GB",
+                        "SKU": "IP15-128-BLK",
+                        "quantity": 12,
+                        "price": 1899.99,
+                        "discount": 1799.99,
+                        "brendId": "m-uuid-apple-333",
+                        "categoryId": "c0c9d0a8-1f2b-4f8c-9c7c-00b1a9b1a222",
+                        "status": 1,
+                        "description": "<p>Məhsul təsviri...</p>",
+                        "tag": "iphone, apple",
+                        "options": [
+                            {
+                                "name": "Rəng",
+                                "value": "Qara"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                },
+                "403": {
+                    "success": 0,
+                    "error": [
+                        "error_permission"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/product/edit/{product_id}",
+            "method": "put",
+            "summary": "Product edit (single)",
+            "description": "product_id route param = GUID. Tapılmasa 404 (error_no_product). Body object olmalıdır və boş olmamalıdır. unit_key/unit_id/unit_value istifadə olunmur.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "product_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Product GUID.",
+                    "example": "p-uuid-iphone-15-111"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Product object. OpenCart-də bəzi field-lər optional idi (description/tag/options/discount).",
+                "example": {
+                    "name": "iPhone 15 128GB (Updated)",
+                    "SKU": "IP15-128-BLK",
+                    "quantity": 10,
+                    "price": 1849.99,
+                    "discount": 1749.99,
+                    "brendId": "m-uuid-apple-333",
+                    "categoryId": "c0c9d0a8-1f2b-4f8c-9c7c-00b1a9b1a222",
+                    "status": 1,
+                    "description": "<p>Yenilənmiş təsvir...</p>",
+                    "tag": "iphone, apple, 15"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_product"
+                    ],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/product/delete/{product_id}",
+            "method": "delete",
+            "summary": "Product delete",
+            "description": "Product GUID üzrə silinir. Tapılmasa 404.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "product_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Product GUID.",
+                    "example": "p-uuid-iphone-15-111"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": false,
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_product"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/product/image/{product_id}",
+            "method": "get",
+            "summary": "Product images",
+            "description": "OpenCart-də əsas image + gallery image URL-ləri qaytarırdı. Laravel-də variation media-dan {main, images[]} formatında qaytarılır. Tapılmasa 404.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "product_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Product GUID.",
+                    "example": "p-uuid-iphone-15-111"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": false,
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": {
+                        "main": "https://example.com/storage/variations/main.jpg",
+                        "images": [
+                            "https://example.com/storage/variations/1.jpg",
+                            "https://example.com/storage/variations/2.jpg"
+                        ]
+                    }
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_product"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/product/updateStatuses",
+            "method": "post",
+            "summary": "Bulk product statuses update",
+            "description": "OpenCart-də product_id kimi GUID gəlirdi və status 0/1 update edilirdi. Laravel-də Product.status (Active/Inactive) və bütün variation status-ları update olunur.",
+            "authorization": "Authorization: Bearer <token>",
+            "query": {},
+            "pathParams": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Array of objects: product_id(GUID), status(int 0|1).",
+                "example": [
+                    {
+                        "product_id": "p-uuid-iphone-15-111",
+                        "status": 1
+                    },
+                    {
+                        "product_id": "p-uuid-iphone-14-222",
+                        "status": 0
+                    }
+                ]
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": {
+                        "message": "Statuses updated successfully."
+                    }
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/customer/get",
+            "method": "get",
+            "summary": "Get customers for 1C",
+            "description": "OpenCart-də GUID olmayan customer-lar qaytarılırdı. Səndə customers.uuid NOT NULL olduğuna görə bu endpoint hazırda boş data qaytarır (success=1). Sonra ayrıca nullable onec_guid column ilə tam 1:1 edilə bilər.",
+            "authorization": "Authorization: Bearer <token>",
+            "query": {},
+            "pathParams": {},
+            "formData": false,
+            "body": false,
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": {
+                        "data": []
+                    }
+                }
+            }
+        },
+        {
+            "path": "/1c/customer/add",
+            "method": "post",
+            "summary": "Customer add (bulk)",
+            "description": "1C customer-ları göndərir. Body array olmalıdır. Hər object üçün GUID + email minimal tələbdir. Digər field-lər (firstname/lastname/phone) varsa update edilir.",
+            "authorization": "Authorization: Bearer <token>",
+            "query": {},
+            "pathParams": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Array of customer objects.",
+                "example": [
+                    {
+                        "GUID": "cust-guid-111",
+                        "firstname": "Eli",
+                        "lastname": "Memmedov",
+                        "email": "eli@example.com",
+                        "phone": "+994 (50) 123-45-67",
+                        "customer_group_id": 1
+                    }
+                ]
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/customer/edit/{customer_id}",
+            "method": "put",
+            "summary": "Customer edit (attach GUID)",
+            "description": "OpenCart-də customer_id numeric idi, body-də GUID gəlirdi və DB-də həmin customer-a GUID yazılırdı. Laravel-də customer_id numeric olaraq qəbul edilir və uuid sahəsinə GUID yazılır.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "customer_id": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Laravel customers.id (numeric).",
+                    "example": 1201
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Customer GUID attach payload.",
+                "example": {
+                    "GUID": "cust-guid-111"
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_customer"
+                    ],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/order/edit/{order_id}",
+            "method": "put",
+            "summary": "Order edit (status update)",
+            "description": "OpenCart-də order_id GUID idi, body status_id göndərilirdi və order history yazılırdı. Laravel-də Order.uuid = GUID gözlənir və Order.status status_map ilə update edilir, OrderStatusHistory yazılır.",
+            "authorization": "Authorization: Bearer <token>",
+            "pathParams": {
+                "order_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Order GUID (orders.uuid).",
+                    "example": "order-guid-999"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "status_id required (OpenCart behavior).",
+                "example": {
+                    "status_id": 17
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "404": {
+                    "success": 0,
+                    "error": [
+                        "error_no_order"
+                    ],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/return/add",
+            "method": "post",
+            "summary": "Return add",
+            "description": "OpenCart return/add payload qəbul edilirdi. Laravel-də bu hissə hələ skeleton-dur: payload log-a yazılır və 200 qaytarılır (success=1). Sonra Return modul DB strukturu gələndə real implementasiya ediləcək.",
+            "authorization": "Authorization: Bearer <token>",
+            "query": {},
+            "pathParams": {},
+            "formData": false,
+            "body": {
+                "type": "json",
+                "required": true,
+                "description": "Return payload example (OpenCart modelinə uyğun).",
+                "example": {
+                    "order_id": "order-guid-999",
+                    "customer_id": "cust-guid-111",
+                    "return_reason_id": 3,
+                    "products": [
+                        {
+                            "id": "p-uuid-iphone-15-111",
+                            "quantity": 1
+                        }
+                    ]
+                }
+            },
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                },
+                "400": {
+                    "success": 0,
+                    "error": [
+                        "Invalid request body, please validate the json object"
+                    ],
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/1c/{any}",
+            "method": "options",
+            "summary": "CORS preflight (OPTIONS)",
+            "description": "OpenCart sendResponse() davranışı kimi OPTIONS çağırışında 200 qaytarır, success=1, error=[] olur.",
+            "authorization": "No strict auth (middleware OPTIONS üçün birbaşa 200 qaytarır).",
+            "pathParams": {
+                "any": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Any endpoint path part.",
+                    "example": "product/add"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "body": false,
+            "responses": {
+                "200": {
+                    "success": 1,
+                    "error": [],
+                    "data": []
+                }
+            }
+        }
+    ]
+}

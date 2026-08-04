@@ -1,0 +1,16 @@
+[0;1;32m●[0m php8.5-fpm.service - The PHP 8.5 FastCGI Process Manager
+     Loaded: loaded (]8;;file://ubuntu-8gb-hel1-1/usr/lib/systemd/system/php8.5-fpm.service/usr/lib/systemd/system/php8.5-fpm.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Sun 2026-04-19 19:53:26 UTC; 2s ago
+       Docs: ]8;;man:php-fpm8.5(8)man:php-fpm8.5(8)]8;;
+   Main PID: 273966 (php-fpm8.5)
+     Status: "[0;1;36mReady to handle connections[0m"
+      Tasks: 3 (limit: 9255)
+     Memory: 11.6M (peak: 12.9M)
+        CPU: 59ms
+     CGroup: /system.slice/php8.5-fpm.service
+             ├─[0;38;5;245m273966 "php-fpm: master process (/etc/php/8.5/fpm/php-fpm.conf)"[0m
+             ├─[0;38;5;245m273968 "php-fpm: pool www"[0m
+             └─[0;38;5;245m273969 "php-fpm: pool www"[0m
+
+Apr 19 19:53:26 ubuntu-8gb-hel1-1 systemd[1]: Starting php8.5-fpm.service - The PHP 8.5 FastCGI Process Manager...
+Apr 19 19:53:26 ubuntu-8gb-hel1-1 systemd[1]: Started php8.5-fpm.service - The PHP 8.5 FastCGI Process Manager.

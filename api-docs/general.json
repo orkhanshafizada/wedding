@@ -1,0 +1,171 @@
+{
+    "tag": "General",
+    "description": "System settings and common public frontend APIs. Language selection is handled through the Content-Language header.\n\nGuest token is created from this section with POST /guest-token. The same X-Guest-Token is used for Cart, Compare and Favorites.",
+    "basePathNote": "These endpoints may operate under the /v1 prefix inside a route group, depending on how the project is configured. Authorization is not required.",
+    "headers": {
+        "Content-Language": {
+            "type": "string",
+            "required": false,
+            "description": "Language code. Example: az, en, ru. If not provided, the default language is used.",
+            "example": "az"
+        },
+        "Authorization": {
+            "type": "string",
+            "required": false,
+            "description": "Bearer token for authenticated customers using customer-api guard. Authenticated customers do not need a guest token.",
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOi..."
+        },
+        "X-Guest-Token": {
+            "type": "string",
+            "required": false,
+            "description": "Common guest token for Cart, Compare and Favorites. It is not sent in the request body and is used only as a header.",
+            "example": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP"
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/settings",
+            "method": "get",
+            "summary": "Public settings",
+            "description": "Returns the public settings data required for the frontend. Language selection is handled through the Content-Language header.",
+            "authorization": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "language_id": 1,
+                        "general": {},
+                        "social": {},
+                        "seo": {}
+                    }
+                }
+            }
+        },
+        {
+            "path": "/guest-token",
+            "method": "post",
+            "summary": "Create guest token",
+            "description": "Creates a common guest token for Cart, Compare and Favorites.\n\nIf X-Guest-Token is already sent in the request, the same token can be returned.\nThe token is not sent in the request body. It is used only as the X-Guest-Token header.\nAuthenticated customers do not need a guest token and this endpoint returns 422 for authenticated customer requests.",
+            "authorization": false,
+            "query": {},
+            "formData": false,
+            "formBody": {},
+            "responses": {
+                "201": {
+                    "success": true,
+                    "message": "Guest token created",
+                    "data": {
+                        "token": "eE2xw7h3pK0mQ1vR8sY4zA6bC9dE3fG5hJ7kL2nP"
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Authenticated user does not need a guest token.",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/countries",
+            "method": "get",
+            "summary": "Country list",
+            "description": "Returns the list of active countries. Language is selected through the Content-Language header, and short_name and long_name are localized.",
+            "authorization": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": [
+                        {
+                            "id": 1,
+                            "iso2": "AZ",
+                            "iso3": "AZE",
+                            "numcode": "031",
+                            "un_member": "yes",
+                            "calling_code": "+994",
+                            "cctld": ".az",
+                            "short_name": "Azerbaijan",
+                            "long_name": "Republic of Azerbaijan"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "path": "/languages",
+            "method": "get",
+            "summary": "Language list",
+            "description": "Returns the list of active languages.",
+            "authorization": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": [
+                        {
+                            "id": 1,
+                            "name": "AZERBAIJANI",
+                            "native_name": "Azerbaijani",
+                            "code": "az",
+                            "is_rtl": false,
+                            "is_default_admin": false,
+                            "is_default_site": true,
+                            "is_required": false,
+                            "sort_order": 1
+                        },
+                        {
+                            "id": 2,
+                            "name": "ENGLISH",
+                            "native_name": "English",
+                            "code": "en",
+                            "is_rtl": false,
+                            "is_default_admin": true,
+                            "is_default_site": false,
+                            "is_required": true,
+                            "sort_order": 2
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "path": "/translations",
+            "method": "get",
+            "summary": "Translation list",
+            "description": "Returns non-empty translation rows for the locale selected through the Content-Language header.",
+            "authorization": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": [
+                        {
+                            "id": 1,
+                            "key": "Add to cart",
+                            "locale": "az",
+                            "value": "Add to cart",
+                            "status": "Translated",
+                            "updated_at": "2025-09-24T10:15:30Z",
+                            "created_at": "2025-09-24T10:15:30Z"
+                        },
+                        {
+                            "id": 2,
+                            "key": "Checkout",
+                            "locale": "az",
+                            "value": "Complete the order",
+                            "status": "Translated",
+                            "updated_at": "2025-09-24T10:15:30Z",
+                            "created_at": "2025-09-24T10:15:30Z"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,890 @@
+{
+    "tag": "Menu",
+    "description": "Menu list, scoped menu trees for header, footer, main_page_menus, menu detail by type, included menu items, and menu based public form submit APIs.",
+    "basePathNote": "These endpoints work under the /v1 route group prefix. They are public endpoints and do not require authorization. By default, only active menus (status=true) are returned.",
+    "headers": {},
+    "cookie": {},
+    "endpoints": [
+        {
+            "path": "/menus",
+            "method": "get",
+            "summary": "Menu list grouped by main_page_menus, header, and footer",
+            "description": "Returns active menus grouped into main_page_menus, header, and footer. Each grouped tree is scoped by its own visibility flag. For example, header contains only menus where in_header=true, and every child inside header must also have in_header=true. If a parent has in_header=true but a child has in_header=false, that child is not returned. The same rule applies to main_page_menus by show_on_main_page=true and footer by in_footer=true. Query filters can still be used. If in_header=true, in_footer=true, or show_on_main_page=true is sent, the response returns only the requested sections. Menu translation fields are selected by locale and fallback locale. Field-level fallback is applied, for example if title is empty in the selected locale, fallback locale or another available translation value is used. Included menu items are returned inside each menu resource as included_items when available.",
+            "authorization": "Public. Authorization is not required.",
+            "formBody": {},
+            "query": {
+                "status": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Filter by menu status. If not provided, status=true is applied by default.",
+                    "example": true
+                },
+                "in_header": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Filter by header visibility. If true is sent, the response returns header only. Menus and children inside header must all have in_header=true.",
+                    "example": true
+                },
+                "show_on_main_page": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Filter by main page visibility. If true is sent, the response returns main_page_menus only. Menus and children inside main_page_menus must all have show_on_main_page=true.",
+                    "example": true
+                },
+                "in_footer": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Filter by footer visibility. If true is sent, the response returns footer only. Menus and children inside footer must all have in_footer=true.",
+                    "example": true
+                },
+                "type": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Filter by menu type. Examples: categories, content, contact, link, faq, teamstaff, logospartners, form, grids, photo_gallery, video_gallery, files.",
+                    "example": "categories"
+                },
+                "view_type": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Exact match filter by menus.view_type. If it is empty in database, the API returns default as view_type.",
+                    "example": "blog"
+                },
+                "parent_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Filter by parent_id. Example: parent_id=5 returns only children of that parent.",
+                    "example": 5
+                },
+                "link": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Exact match filter by menu_translations.link. If the value does not start with /, it is normalized automatically.",
+                    "example": "/about-us"
+                },
+                "q": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Search by resolved menu name.",
+                    "example": "about"
+                },
+                "locale": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Locale code used for translated menu fields. If not provided, the application locale is used.",
+                    "example": "en"
+                },
+                "with_children": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "Accepted for backward compatibility. The current grouped response always returns scoped menu trees for main_page_menus, header, and footer.",
+                    "example": true
+                }
+            },
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "main_page_menus": [
+                            {
+                                "id": 1,
+                                "uuid": "26be667d-9a60-4c3f-983a-0a008329383f",
+                                "parent_id": null,
+                                "type": "categories",
+                                "view_type": "default",
+                                "status": true,
+                                "in_header": false,
+                                "in_footer": false,
+                                "show_on_main_page": true,
+                                "sort_order": 1,
+                                "name": "Electronics",
+                                "title": "Electronics products",
+                                "description": "Electronics category",
+                                "link": "/electronics",
+                                "filters": {
+                                    "main_category_id": 1
+                                },
+                                "icon": {
+                                    "text": "ri-computer-line",
+                                    "image": "menus/icons/icon.png",
+                                    "image_url": "https://cdn.example.com/storage/menus/icons/icon.png"
+                                },
+                                "main_image": {
+                                    "path": "menus/main-images/main.jpg",
+                                    "url": "https://cdn.example.com/storage/menus/main-images/main.jpg"
+                                },
+                                "seo": {
+                                    "meta_title": "Electronics",
+                                    "meta_description": "Electronics products",
+                                    "meta_keywords": "phone, laptop, electronics"
+                                },
+                                "children": [
+                                    {
+                                        "id": 11,
+                                        "uuid": "16be667d-9a60-4c3f-983a-0a0083293811",
+                                        "parent_id": 1,
+                                        "type": "categories",
+                                        "view_type": "default",
+                                        "status": true,
+                                        "in_header": false,
+                                        "in_footer": false,
+                                        "show_on_main_page": true,
+                                        "sort_order": 1,
+                                        "name": "Phones",
+                                        "title": "Mobile phones",
+                                        "description": "Mobile phones category",
+                                        "link": "/electronics/phones",
+                                        "filters": {
+                                            "main_category_id": 11
+                                        },
+                                        "icon": {
+                                            "text": null,
+                                            "image": null,
+                                            "image_url": null
+                                        },
+                                        "main_image": {
+                                            "path": null,
+                                            "url": null
+                                        },
+                                        "seo": {
+                                            "meta_title": "Phones",
+                                            "meta_description": "Mobile phones",
+                                            "meta_keywords": "phones, smartphones"
+                                        },
+                                        "children": [],
+                                        "included_items": []
+                                    }
+                                ],
+                                "included_items": [
+                                    {
+                                        "included_type": "menu",
+                                        "type": "content",
+                                        "sort_order": 1,
+                                        "menu": {
+                                            "id": 40,
+                                            "uuid": "4f2e667d-9a60-4c3f-983a-0a0083293040",
+                                            "parent_id": null,
+                                            "type": "content",
+                                            "view_type": "default",
+                                            "status": true,
+                                            "in_header": false,
+                                            "in_footer": false,
+                                            "show_on_main_page": false,
+                                            "sort_order": 4,
+                                            "name": "Delivery service",
+                                            "title": "Delivery service",
+                                            "description": "Delivery service information",
+                                            "link": "/delivery-service",
+                                            "filters": null,
+                                            "icon": {
+                                                "text": null,
+                                                "image": null,
+                                                "image_url": null
+                                            },
+                                            "main_image": {
+                                                "path": null,
+                                                "url": null
+                                            },
+                                            "seo": {
+                                                "meta_title": "Delivery service",
+                                                "meta_description": "Delivery service information",
+                                                "meta_keywords": "delivery, service"
+                                            },
+                                            "children": [],
+                                            "included_items": []
+                                        },
+                                        "data": {
+                                            "title": "Delivery service",
+                                            "description": "<p>Delivery service content...</p>",
+                                            "main_photo": "https://cdn.example.com/storage/menu/content/40/main.jpg",
+                                            "files": [],
+                                            "seo": {
+                                                "meta_title": "Delivery service",
+                                                "meta_description": "Delivery service information",
+                                                "meta_keywords": "delivery, service"
+                                            }
+                                        },
+                                        "included_items": []
+                                    },
+                                    {
+                                        "included_type": "slider",
+                                        "type": "slider",
+                                        "sort_order": 2,
+                                        "menu": null,
+                                        "data": {
+                                            "id": 3,
+                                            "name": "Home page slider",
+                                            "items": []
+                                        },
+                                        "included_items": []
+                                    },
+                                    {
+                                        "included_type": "brand",
+                                        "type": "brand",
+                                        "sort_order": 3,
+                                        "menu": null,
+                                        "data": {
+                                            "filter_id": 5,
+                                            "name": "Brand",
+                                            "slug": "brand",
+                                            "input_type": "single",
+                                            "is_color_filter": false,
+                                            "show_in_sidebar": true,
+                                            "is_required": false,
+                                            "is_clickable": true,
+                                            "image": null,
+                                            "meta_title": "Brand",
+                                            "meta_description": null,
+                                            "meta_keywords": null,
+                                            "values": [
+                                                {
+                                                    "value_id": 20,
+                                                    "name": "Apple",
+                                                    "slug": "apple",
+                                                    "count": 0,
+                                                    "color": null,
+                                                    "image": null,
+                                                    "meta_title": "Apple",
+                                                    "meta_description": null,
+                                                    "meta_keywords": null
+                                                }
+                                            ]
+                                        },
+                                        "included_items": []
+                                    }
+                                ]
+                            }
+                        ],
+                        "header": [
+                            {
+                                "id": 2,
+                                "uuid": "7bce667d-9a60-4c3f-983a-0a0083293000",
+                                "parent_id": null,
+                                "type": "link",
+                                "view_type": "default",
+                                "status": true,
+                                "in_header": true,
+                                "in_footer": false,
+                                "show_on_main_page": false,
+                                "sort_order": 2,
+                                "name": "About us",
+                                "title": "About company",
+                                "description": "Information about company and mission",
+                                "link": "/about-us",
+                                "filters": null,
+                                "icon": {
+                                    "text": null,
+                                    "image": null,
+                                    "image_url": null
+                                },
+                                "main_image": {
+                                    "path": null,
+                                    "url": null
+                                },
+                                "seo": {
+                                    "meta_title": "About us",
+                                    "meta_description": "Information about company",
+                                    "meta_keywords": "about us, company"
+                                },
+                                "children": [
+                                    {
+                                        "id": 21,
+                                        "uuid": "8bce667d-9a60-4c3f-983a-0a0083293021",
+                                        "parent_id": 2,
+                                        "type": "link",
+                                        "view_type": "default",
+                                        "status": true,
+                                        "in_header": true,
+                                        "in_footer": false,
+                                        "show_on_main_page": false,
+                                        "sort_order": 1,
+                                        "name": "Mission",
+                                        "title": "Our mission",
+                                        "description": "Company mission",
+                                        "link": "/about-us/mission",
+                                        "filters": null,
+                                        "icon": {
+                                            "text": null,
+                                            "image": null,
+                                            "image_url": null
+                                        },
+                                        "main_image": {
+                                            "path": null,
+                                            "url": null
+                                        },
+                                        "seo": {
+                                            "meta_title": "Mission",
+                                            "meta_description": "Company mission",
+                                            "meta_keywords": "mission, company"
+                                        },
+                                        "children": [],
+                                        "included_items": []
+                                    }
+                                ],
+                                "included_items": []
+                            }
+                        ],
+                        "footer": [
+                            {
+                                "id": 10,
+                                "uuid": "9f2e667d-9a60-4c3f-983a-0a0083293010",
+                                "parent_id": null,
+                                "type": "content",
+                                "view_type": "default",
+                                "status": true,
+                                "in_header": false,
+                                "in_footer": true,
+                                "show_on_main_page": false,
+                                "sort_order": 1,
+                                "name": "About us",
+                                "title": "About company",
+                                "description": "Short company description",
+                                "link": "/about-us",
+                                "filters": null,
+                                "icon": {
+                                    "text": null,
+                                    "image": null,
+                                    "image_url": null
+                                },
+                                "main_image": {
+                                    "path": "menus/main-images/about.jpg",
+                                    "url": "https://cdn.example.com/storage/menus/main-images/about.jpg"
+                                },
+                                "seo": {
+                                    "meta_title": "About us",
+                                    "meta_description": "Information about company",
+                                    "meta_keywords": "about us, company"
+                                },
+                                "children": [],
+                                "included_items": []
+                            }
+                        ]
+                    }
+                },
+                "200_only_header_example": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "header": [
+                            {
+                                "id": 2,
+                                "uuid": "7bce667d-9a60-4c3f-983a-0a0083293000",
+                                "parent_id": null,
+                                "type": "link",
+                                "view_type": "default",
+                                "status": true,
+                                "in_header": true,
+                                "in_footer": false,
+                                "show_on_main_page": false,
+                                "sort_order": 2,
+                                "name": "About us",
+                                "title": "About company",
+                                "description": "Information about company and mission",
+                                "link": "/about-us",
+                                "filters": null,
+                                "icon": {
+                                    "text": null,
+                                    "image": null,
+                                    "image_url": null
+                                },
+                                "main_image": {
+                                    "path": null,
+                                    "url": null
+                                },
+                                "seo": {
+                                    "meta_title": "About us",
+                                    "meta_description": "Information about company",
+                                    "meta_keywords": "about us, company"
+                                },
+                                "children": [
+                                    {
+                                        "id": 21,
+                                        "uuid": "8bce667d-9a60-4c3f-983a-0a0083293021",
+                                        "parent_id": 2,
+                                        "type": "link",
+                                        "view_type": "default",
+                                        "status": true,
+                                        "in_header": true,
+                                        "in_footer": false,
+                                        "show_on_main_page": false,
+                                        "sort_order": 1,
+                                        "name": "Mission",
+                                        "title": "Our mission",
+                                        "description": "Company mission",
+                                        "link": "/about-us/mission",
+                                        "filters": null,
+                                        "icon": {
+                                            "text": null,
+                                            "image": null,
+                                            "image_url": null
+                                        },
+                                        "main_image": {
+                                            "path": null,
+                                            "url": null
+                                        },
+                                        "seo": {
+                                            "meta_title": "Mission",
+                                            "meta_description": "Company mission",
+                                            "meta_keywords": "mission, company"
+                                        },
+                                        "children": [],
+                                        "included_items": []
+                                    }
+                                ],
+                                "included_items": []
+                            }
+                        ]
+                    }
+                },
+                "200_only_footer_example": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "footer": [
+                            {
+                                "id": 10,
+                                "uuid": "9f2e667d-9a60-4c3f-983a-0a0083293010",
+                                "parent_id": null,
+                                "type": "content",
+                                "view_type": "default",
+                                "status": true,
+                                "in_header": false,
+                                "in_footer": true,
+                                "show_on_main_page": false,
+                                "sort_order": 1,
+                                "name": "About us",
+                                "title": "About company",
+                                "description": "Short company description",
+                                "link": "/about-us",
+                                "filters": null,
+                                "icon": {
+                                    "text": null,
+                                    "image": null,
+                                    "image_url": null
+                                },
+                                "main_image": {
+                                    "path": "menus/main-images/about.jpg",
+                                    "url": "https://cdn.example.com/storage/menus/main-images/about.jpg"
+                                },
+                                "seo": {
+                                    "meta_title": "About us",
+                                    "meta_description": "Information about company",
+                                    "meta_keywords": "about us, company"
+                                },
+                                "children": [],
+                                "included_items": []
+                            }
+                        ]
+                    }
+                },
+                "200_only_main_page_example": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "main_page_menus": [
+                            {
+                                "id": 1,
+                                "uuid": "26be667d-9a60-4c3f-983a-0a008329383f",
+                                "parent_id": null,
+                                "type": "categories",
+                                "view_type": "default",
+                                "status": true,
+                                "in_header": false,
+                                "in_footer": false,
+                                "show_on_main_page": true,
+                                "sort_order": 1,
+                                "name": "Electronics",
+                                "title": "Electronics products",
+                                "description": "Electronics category",
+                                "link": "/electronics",
+                                "filters": {
+                                    "main_category_id": 1
+                                },
+                                "icon": {
+                                    "text": "ri-computer-line",
+                                    "image": "menus/icons/icon.png",
+                                    "image_url": "https://cdn.example.com/storage/menus/icons/icon.png"
+                                },
+                                "main_image": {
+                                    "path": "menus/main-images/main.jpg",
+                                    "url": "https://cdn.example.com/storage/menus/main-images/main.jpg"
+                                },
+                                "seo": {
+                                    "meta_title": "Electronics",
+                                    "meta_description": "Electronics products",
+                                    "meta_keywords": "phone, laptop, electronics"
+                                },
+                                "children": [
+                                    {
+                                        "id": 11,
+                                        "uuid": "16be667d-9a60-4c3f-983a-0a0083293811",
+                                        "parent_id": 1,
+                                        "type": "categories",
+                                        "view_type": "default",
+                                        "status": true,
+                                        "in_header": false,
+                                        "in_footer": false,
+                                        "show_on_main_page": true,
+                                        "sort_order": 1,
+                                        "name": "Phones",
+                                        "title": "Mobile phones",
+                                        "description": "Mobile phones category",
+                                        "link": "/electronics/phones",
+                                        "filters": {
+                                            "main_category_id": 11
+                                        },
+                                        "icon": {
+                                            "text": null,
+                                            "image": null,
+                                            "image_url": null
+                                        },
+                                        "main_image": {
+                                            "path": null,
+                                            "url": null
+                                        },
+                                        "seo": {
+                                            "meta_title": "Phones",
+                                            "meta_description": "Mobile phones",
+                                            "meta_keywords": "phones, smartphones"
+                                        },
+                                        "children": [],
+                                        "included_items": []
+                                    }
+                                ],
+                                "included_items": []
+                            }
+                        ]
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/menus/detail",
+            "method": "get",
+            "summary": "Menu detail by type with optional data_slug",
+            "description": "Finds a menu by link and calls a type-specific handler based on menu.type. If data_slug is sent, the endpoint returns detail data from the selected menu type data source. For example, for type=grids and view_type=blog, data_slug can be a concrete post slug and the endpoint returns that post detail instead of the list. If a handler is not found, 404 is returned. The menu object always returns view_type; if it is empty in database, default is returned. If locale query parameter is provided, menu translation fields are returned using locale and fallback locale. Field-level fallback is applied for title and description. Included menu, slider, and brand items are returned in included_items.",
+            "authorization": "Public. Authorization is not required.",
+            "formBody": {},
+            "query": {
+                "link": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Menu link or slug. It is searched by menu_translations.link. If it does not start with /, it is normalized automatically.",
+                    "example": "blogs"
+                },
+                "data_slug": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Optional data detail selector based on menu type. Example: for type=grids and view_type=blog, this is the post slug and returns one post detail instead of the list.",
+                    "example": "today-important-news"
+                },
+                "page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Pagination page for list-based menu types when data_slug is not sent.",
+                    "example": 1
+                },
+                "per_page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Pagination per page for list-based menu types when data_slug is not sent. Default is 12, maximum is 100.",
+                    "example": 12
+                },
+                "locale": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Locale code used for translated menu fields. If not provided, the application locale is used.",
+                    "example": "en"
+                }
+            },
+            "formData": false,
+            "responses": {
+                "200_content_example": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "type": "content",
+                        "menu": {
+                            "id": 10,
+                            "uuid": "9f2e667d-9a60-4c3f-983a-0a0083293010",
+                            "parent_id": null,
+                            "type": "content",
+                            "view_type": "default",
+                            "status": true,
+                            "in_header": false,
+                            "in_footer": true,
+                            "show_on_main_page": false,
+                            "sort_order": 1,
+                            "name": "About us",
+                            "title": "About company",
+                            "description": "Short company description",
+                            "link": "/about-us",
+                            "filters": null,
+                            "icon": {
+                                "text": null,
+                                "image": null,
+                                "image_url": null
+                            },
+                            "main_image": {
+                                "path": "menus/main-images/about.jpg",
+                                "url": "https://cdn.example.com/storage/menus/main-images/about.jpg"
+                            },
+                            "seo": {
+                                "meta_title": "About us",
+                                "meta_description": "Information about company",
+                                "meta_keywords": "about us, company"
+                            },
+                            "children": [],
+                            "included_items": []
+                        },
+                        "data": {
+                            "title": "About us",
+                            "description": "<p>Company content...</p>",
+                            "main_photo": "https://cdn.example.com/storage/menu/content/10/main.jpg",
+                            "files": [],
+                            "seo": {
+                                "meta_title": "About us",
+                                "meta_description": "Information about company",
+                                "meta_keywords": "about us, company"
+                            }
+                        },
+                        "included_items": []
+                    }
+                },
+                "200_grids_list_example": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "type": "grids",
+                        "menu": {
+                            "id": 30,
+                            "uuid": "1a2b667d-9a60-4c3f-983a-0a0083293030",
+                            "parent_id": null,
+                            "type": "grids",
+                            "view_type": "blog",
+                            "status": true,
+                            "in_header": true,
+                            "in_footer": false,
+                            "show_on_main_page": false,
+                            "sort_order": 3,
+                            "name": "Blog",
+                            "title": "News and blog",
+                            "description": "Short blog section description",
+                            "link": "/blog",
+                            "filters": null,
+                            "icon": {
+                                "text": null,
+                                "image": null,
+                                "image_url": null
+                            },
+                            "main_image": {
+                                "path": "menus/main-images/blog.jpg",
+                                "url": "https://cdn.example.com/storage/menus/main-images/blog.jpg"
+                            },
+                            "seo": {
+                                "meta_title": "Blog",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            },
+                            "children": [],
+                            "included_items": []
+                        },
+                        "data": {
+                            "items": [
+                                {
+                                    "id": 101,
+                                    "datetime1": "2026-02-10 10:00:00",
+                                    "datetime2": null,
+                                    "name": "New post",
+                                    "content": "<p>Post content...</p>",
+                                    "location_or_group": null,
+                                    "tags": [
+                                        "news",
+                                        "blog"
+                                    ],
+                                    "main_photo": "https://cdn.example.com/storage/grids/101/main.jpg",
+                                    "seo": {
+                                        "meta_title": "New post",
+                                        "meta_description": "Short description..."
+                                    }
+                                }
+                            ],
+                            "meta": {
+                                "page": 1,
+                                "per_page": 12,
+                                "total": 24,
+                                "last_page": 2
+                            },
+                            "seo": {
+                                "meta_title": "Blog",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            }
+                        },
+                        "included_items": []
+                    }
+                },
+                "200_grids_detail_by_data_slug_example": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "type": "grids",
+                        "menu": {
+                            "id": 30,
+                            "uuid": "1a2b667d-9a60-4c3f-983a-0a0083293030",
+                            "parent_id": null,
+                            "type": "grids",
+                            "view_type": "blog",
+                            "status": true,
+                            "in_header": true,
+                            "in_footer": false,
+                            "show_on_main_page": false,
+                            "sort_order": 3,
+                            "name": "Blog",
+                            "title": "News and blog",
+                            "description": "Short blog section description",
+                            "link": "/blog",
+                            "filters": null,
+                            "icon": {
+                                "text": null,
+                                "image": null,
+                                "image_url": null
+                            },
+                            "main_image": {
+                                "path": "menus/main-images/blog.jpg",
+                                "url": "https://cdn.example.com/storage/menus/main-images/blog.jpg"
+                            },
+                            "seo": {
+                                "meta_title": "Blog",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            },
+                            "children": [],
+                            "included_items": []
+                        },
+                        "data": {
+                            "mode": "detail",
+                            "slug": "today-important-news",
+                            "item": {
+                                "id": 155,
+                                "datetime1": "2026-03-01 09:10:00",
+                                "datetime2": null,
+                                "name": "Today important news",
+                                "content": "<p>Detailed post content...</p>",
+                                "location_or_group": null,
+                                "tags": [
+                                    "news"
+                                ],
+                                "main_photo": "https://cdn.example.com/storage/grids/155/main.jpg",
+                                "seo": {
+                                    "meta_title": "Today important news",
+                                    "meta_description": "Short description..."
+                                }
+                            },
+                            "seo": {
+                                "meta_title": "Blog",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            }
+                        },
+                        "included_items": []
+                    }
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/forms/menus/{menu_uuid_or_id}/responses",
+            "method": "post",
+            "summary": "Submit dynamic form response by menu",
+            "description": "The {menu_uuid_or_id} parameter can be a Menu uuid or Menu id. The body accepts answers as an object in label_id => value format. Validation is dynamic and is checked on the server side according to form_labels.type and is_required rules. On success, the data is stored in form_responses. Admin panel can view submitted responses, while the public API only creates responses.",
+            "authorization": "Public. Authorization is not required.",
+            "pathParams": {
+                "menu_uuid_or_id": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Menu uuid or Menu id. Example: 233 or 26be667d-9a60-4c3f-983a-0a008329383f.",
+                    "example": "26be667d-9a60-4c3f-983a-0a008329383f"
+                }
+            },
+            "formBody": {
+                "answers": {
+                    "type": "object",
+                    "required": true,
+                    "description": "Dynamic answers where key is label_id and value is data according to label type. Examples: textbox/string, textarea/string, numeric/number, checkbox/boolean, multi_selectbox/array.",
+                    "example": {
+                        "5": "Azerbaijan",
+                        "4": "Elvin"
+                    }
+                }
+            },
+            "query": {},
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 123,
+                        "ok": true
+                    }
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        }
+    ]
+}

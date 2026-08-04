@@ -1,0 +1,14 @@
+{
+    "info": {
+        "title": "Documentation",
+        "version": "1.0.0",
+        "description": "API Documentation"
+    },
+    "servers": [
+        {
+            "url": "http:\/\/localhost.test\/api\/v1",
+            "description": "API Server"
+        }
+    ],
+    "authorization": "bearerToken"
+}

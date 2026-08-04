@@ -1,0 +1,33 @@
+/* Səhifə bölməsinə açıq boz fon verək ki, ağ kartlar seçilsin */
+.page-content > .container-fluid{
+    background: var(--vz-light, #f5f7fb); /* Velzon var-yoxsa fallback */
+    border-radius: 12px;
+    padding: 16px 16px 8px;
+}
+
+/* Bütün settings/card bloklarına sərhəd və kölgə */
+.settings-card,
+.card{
+    background: var(--vz-card-bg, #fff);            /* ağ kart */
+    border: 1px solid var(--vz-border-color, #e9ebec);
+    box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 2px 4px rgba(16,24,40,.06);
+    border-radius: 12px;
+}
+
+/* Kartın içi daha hava alsın */
+.settings-card{ padding: 16px; }
+.card .card-body{ padding: 16px; }
+
+/* Bölmə başlıqları bir az qabarıq görünsün */
+.fw-semibold{ color: var(--vz-heading-color, #1f2937); }
+
+/* Tabs aktiv rəngi daha nəzərə çarpan olsun (istəyə bağlı) */
+.nav-pills.nav-customs .nav-link.active{
+    box-shadow: 0 2px 6px rgba(85,110,230,.25);
+}
+
+.form-body {
+    background: var(--vz-light, #f9fafb);
+    border-radius: 12px;
+    padding: 16px;
+}

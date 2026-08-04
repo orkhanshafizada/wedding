@@ -1,0 +1,68 @@
+{
+    "tag": "Slider",
+    "description": "Public API for retrieving active sliders. Results are returned in ascending order by sort_order, and the image, mobile_image, and text fields are selected from the translation for the current locale.",
+    "endpoints": [
+        {
+            "path": "/sliders",
+            "method": "GET",
+            "summary": "Retrieve all active sliders",
+            "description": "Returns only sliders where is_active=true. Slider data is taken from the translation matching the current locale. If no translation exists for the current locale, the first available translation is used as a fallback.",
+            "authentication": {
+                "required": false,
+                "type": null
+            },
+            "parameters": [],
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "Sliders loaded successfully",
+                    "data": [
+                        {
+                            "id": 1,
+                            "image": "http://example.com/storage/sliders/slider_en_abc123.jpg",
+                            "mobile_image": "http://example.com/storage/sliders/slider_mobile_en_abc123.jpg",
+                            "title": "Welcome to Our Store",
+                            "description": "<p>HTML content...</p>",
+                            "button_text": "Shop Now",
+                            "button_link": "https://example.com/shop",
+                            "action_type": "link",
+                            "hide_text_mobile": true,
+                            "sort_order": 0,
+                            "is_active": true
+                        },
+                        {
+                            "id": 2,
+                            "image": "http://example.com/storage/sliders/slider_az_def456.jpg",
+                            "mobile_image": null,
+                            "title": "New Collection",
+                            "description": "<p>Content for the slider</p>",
+                            "button_text": "View",
+                            "button_link": null,
+                            "action_type": "content",
+                            "hide_text_mobile": false,
+                            "sort_order": 1,
+                            "is_active": true
+                        }
+                    ]
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            },
+            "notes": [
+                "Only sliders with is_active=true are returned",
+                "Results are sorted in ascending order by sort_order",
+                "image and mobile_image are no longer stored in the sliders table; they are stored in the slider_translations table",
+                "The API retrieves the image and mobile_image fields from the translation matching the current locale",
+                "If no translation exists for the current locale, the first available translation is returned as a fallback",
+                "image and mobile_image are returned as full public URLs",
+                "When action_type=link, button_link may be filled and description may be empty",
+                "When action_type=content, description must be filled",
+                "hide_text_mobile is applied only at the selected translation level",
+                "This endpoint is public and does not require authentication"
+            ]
+        }
+    ]
+}

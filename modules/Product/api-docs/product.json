@@ -1,0 +1,1436 @@
+{
+    "tag": "Product",
+    "description": "Product categories (menus.type=categories), live search, discount hours, product list, product detail, and direct checkout (buy now) APIs.",
+    "basePathNote": "These endpoints work under the /v1 prefix inside the route group. Product detail is a public endpoint. Buy now works for both guest users and authenticated customers. Locale is selected through the Content-Language header.",
+    "headers": {
+        "Content-Language": {
+            "type": "text",
+            "required": true,
+            "description": "Locale header. Example: az | en | ru. Middleware sets the application locale based on this header.",
+            "example": "az"
+        },
+        "Authorization": {
+            "type": "string",
+            "required": false,
+            "description": "Bearer token for authenticated customers. It may be used during buy now requests.",
+            "example": "Bearer 1|4WHKo6K0AZNGiPiL9QWs1qXZ2CwnYbaCQyfUYr8M1f224977"
+        },
+        "X-Guest-Token": {
+            "type": "string",
+            "required": false,
+            "description": "Guest cart token. The buy now endpoint uses a temporary cart, but this header may be sent for compatibility with other unauthenticated customer flows.",
+            "example": "eE2xw7h3pK0mQ1nR8tY6uV4sW2xZ9aB7cD5eF1gH"
+        }
+    },
+    "cookie": {
+        "cart_token": {
+            "type": "string",
+            "required": false,
+            "description": "Guest cart token from cookie.",
+            "example": "eE2xw7h3pK0mQ1nR8tY6uV4sW2xZ9aB7cD5eF1gH"
+        }
+    },
+    "endpoints": [
+        {
+            "path": "/product/live-search",
+            "method": "get",
+            "summary": "Product live search",
+            "description": "Fast live search endpoint for the site header or search input. The q value is searched in three places: active categories where menus.type=categories, active product filter values whose parent filter name or slug matches brand-related keywords, and all active published product variations. Product variation search checks name, slug, description, meta_title, meta_description, meta_keywords, sku, and model. The response is returned in a frontend-ready name + items structure where name can be rendered as a section heading.",
+            "authorization": "Public. Authorization is not required.",
+            "query": {
+                "q": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Live search text. Minimum 2 characters and maximum 100 characters. Search is performed in brands, categories, and products sections.",
+                    "example": "bosch"
+                },
+                "limit": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Maximum number of results per section. Default is 8 and maximum is 20.",
+                    "example": 8
+                }
+            },
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "brands": {
+                            "name": "Brands",
+                            "items": [
+                                {
+                                    "id": 12,
+                                    "filter_id": 3,
+                                    "name": "Bosch",
+                                    "slug": "bosch",
+                                    "image": null,
+                                    "link": "/products?filters[3][]=12"
+                                }
+                            ]
+                        },
+                        "categories": {
+                            "name": "Categories",
+                            "items": [
+                                {
+                                    "id": 5,
+                                    "name": "Power Tools",
+                                    "slug": null,
+                                    "image": "/storage/menus/power-tools.png",
+                                    "link": "/power-tools"
+                                }
+                            ]
+                        },
+                        "products": {
+                            "name": "Products",
+                            "items": [
+                                {
+                                    "id": 44,
+                                    "product_id": 18,
+                                    "name": "Bosch Drill GSB 13 RE",
+                                    "slug": "bosch-drill-gsb-13-re",
+                                    "sku": "GSB13RE",
+                                    "model": "GSB 13 RE",
+                                    "image": "/storage/variations/bosch-drill.jpg",
+                                    "price": "120.00",
+                                    "old_price": "150.00",
+                                    "discount_price": "110.00",
+                                    "link": "/product/bosch-drill-gsb-13-re"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "200_empty": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "brands": {
+                            "name": "Brands",
+                            "items": []
+                        },
+                        "categories": {
+                            "name": "Categories",
+                            "items": []
+                        },
+                        "products": {
+                            "name": "Products",
+                            "items": []
+                        }
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": {
+                        "q": [
+                            "Search query must be at least 2 characters."
+                        ],
+                        "limit": [
+                            "Limit may not be greater than 20."
+                        ]
+                    }
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/product/purchase-requests",
+            "method": "post",
+            "summary": "Product purchase request",
+            "description": "Creates a product purchase request from the product detail popup form. This endpoint does not create an order. It stores the customer's request so that admins can review and contact the customer later. The frontend must send fullname, phone, product_variation_id, and quantity. Product name is not accepted from the frontend because product and variation data are resolved securely from product_variation_id. Authenticated customers may send Authorization: Bearer token; guest users may send X-Guest-Token or cart_token cookie. If no guest token is provided, the backend generates one automatically.",
+            "authorization": "Public. Authorization: Bearer {token} may be sent for authenticated customers.",
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "fullname": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Customer full name. Minimum 2 characters and maximum 255 characters.",
+                    "example": "Orkhan Mammadov"
+                },
+                "phone": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Customer phone number. Accepted formats are normalized by the backend to +994XXXXXXXXX.",
+                    "example": "+994501234567"
+                },
+                "product_variation_id": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Product variation ID from product detail active_variation.id or variations[].id.",
+                    "example": 9901
+                },
+                "quantity": {
+                    "type": "number",
+                    "required": true,
+                    "description": "Requested product quantity. Minimum value is 1 and maximum value is 999.",
+                    "example": 1
+                }
+            },
+            "requestExamples": [
+                {
+                    "title": "Guest purchase request",
+                    "headers": {
+                        "Content-Language": "az",
+                        "X-Guest-Token": "eE2xw7h3pK0mQ1nR8tY6uV4sW2xZ9aB7cD5eF1gH"
+                    },
+                    "body": {
+                        "fullname": "Orkhan Mammadov",
+                        "phone": "+994501234567",
+                        "product_variation_id": 9901,
+                        "quantity": 1
+                    }
+                },
+                {
+                    "title": "Authenticated customer purchase request",
+                    "headers": {
+                        "Content-Language": "az",
+                        "Authorization": "Bearer 1|4WHKo6K0AZNGiPiL9QWs1qXZ2CwnYbaCQyfUYr8M1f224977"
+                    },
+                    "body": {
+                        "fullname": "Orkhan Mammadov",
+                        "phone": "0501234567",
+                        "product_variation_id": 9901,
+                        "quantity": 1
+                    }
+                }
+            ],
+            "responses": {
+                "201": {
+                    "success": true,
+                    "message": "Purchase request has been submitted successfully.",
+                    "data": {
+                        "uuid": "5c84fd44-0cb9-4d33-a4ff-8d7103d7eaa1",
+                        "fullname": "Orkhan Mammadov",
+                        "phone": "+994501234567",
+                        "quantity": 1,
+                        "status": "pending",
+                        "product": {
+                            "id": 220
+                        },
+                        "variation": {
+                            "id": 9901,
+                            "name": "Emtop 118 ECDL6200118 20V Cordless Drill",
+                            "slug": "emtop-118-20v-cordless-drill-ecdl6200118",
+                            "sku": "ECDL6200118",
+                            "model": "ECDL6200118",
+                            "price": "64.80",
+                            "stock": 10
+                        },
+                        "created_at": "2026-03-10T10:15:00.000000Z"
+                    }
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": {
+                        "fullname": [
+                            "Full name is required."
+                        ],
+                        "phone": [
+                            "Phone number must be a valid Azerbaijan phone number."
+                        ],
+                        "product_variation_id": [
+                            "Selected product variation was not found."
+                        ],
+                        "quantity": [
+                            "Quantity must be at least 1."
+                        ]
+                    }
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/product/list",
+            "method": "get",
+            "summary": "Product list with optional category, filters, search, and sorting",
+            "description": "Returns a product list. If main_category_id is provided, products from that category and all descendant categories are included, and sidebar filters are built from that category tree. If main_category_id is not provided, the endpoint works as a global list for search, home, brand, or similar pages. When a sidebar filter is selected, both products and available filters with counts are recalculated according to the selected filters. The list is built on product variations with a 1 product = 1 default variation approach.",
+            "authorization": "Public. Authorization is not required.",
+            "query": {
+                "main_category_id": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Main category identifier. It accepts menus.id or uuid for records where type=categories. When provided, all descendant categories are included. If omitted, the endpoint works globally.",
+                    "example": 12
+                },
+                "q": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Search text. It searches product_variation_translations.name and product_variation_translations.slug with LIKE %q%.",
+                    "example": "iphone"
+                },
+                "is_new": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "When true, only products marked as new are returned. When false, only products not marked as new are returned. If omitted, this filter is not applied.",
+                    "example": true
+                },
+                "is_popular": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "When true, only popular products are returned. When false, only non-popular products are returned. If omitted, this filter is not applied.",
+                    "example": false
+                },
+                "most_sale": {
+                    "type": "boolean",
+                    "required": false,
+                    "description": "When true, only best-selling products are returned. When false, only products not marked as best-selling are returned. If omitted, this filter is not applied.",
+                    "example": true
+                },
+                "page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Pagination page number.",
+                    "example": 1
+                },
+                "per_page": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Pagination page size. Maximum value is 60.",
+                    "example": 20
+                },
+                "sort": {
+                    "type": "text",
+                    "required": false,
+                    "description": "Sort option. Allowed values: newest | name_asc | name_desc | price_asc | price_desc | popular | most_sale.",
+                    "example": "newest"
+                },
+                "price_min": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Minimum price filter. Applies pv.price >= price_min.",
+                    "example": 100
+                },
+                "price_max": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Maximum price filter. Applies pv.price <= price_max.",
+                    "example": 2000
+                },
+                "filters": {
+                    "type": "object",
+                    "required": false,
+                    "description": "Facet filters. Format: filters[filter_id][]=value_id. Different filters are combined with AND logic, while values inside the same filter are combined with OR logic. If main_category_id is not provided, meta.filters may be returned as an empty array because category sidebar filters are built only for a category tree.",
+                    "example": {
+                        "3": [
+                            11,
+                            12
+                        ],
+                        "9": [
+                            44
+                        ]
+                    }
+                }
+            },
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "menu": {
+                            "id": 12,
+                            "name": "Smartphones",
+                            "meta_title": "Smartphones",
+                            "meta_description": "Smartphones category",
+                            "meta_keywords": "smartphone, phone"
+                        },
+                        "breadcrumbs": [
+                            {
+                                "id": 5,
+                                "name": "Electronics",
+                                "meta_title": "Electronics",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            },
+                            {
+                                "id": 12,
+                                "name": "Smartphones",
+                                "meta_title": "Smartphones",
+                                "meta_description": "Smartphones category",
+                                "meta_keywords": "smartphone, phone"
+                            }
+                        ],
+                        "subcategories": [
+                            {
+                                "id": 13,
+                                "name": "Apple",
+                                "meta_title": "Apple",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            },
+                            {
+                                "id": 14,
+                                "name": "Samsung",
+                                "meta_title": "Samsung",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            }
+                        ],
+                        "applied": {
+                            "main_category_id": 12,
+                            "q": null,
+                            "sort": "newest",
+                            "is_new": true,
+                            "is_popular": null,
+                            "most_sale": null,
+                            "price_min": null,
+                            "price_max": null,
+                            "filters": {
+                                "3": [
+                                    11,
+                                    12
+                                ]
+                            }
+                        },
+                        "price": {
+                            "available_min": 0,
+                            "available_max": 1757.75,
+                            "filtered_min": 100,
+                            "filtered_max": 1599.99
+                        },
+                        "sort_options": [
+                            {
+                                "key": "newest",
+                                "label": "Newest first"
+                            },
+                            {
+                                "key": "name_asc",
+                                "label": "A-Z"
+                            },
+                            {
+                                "key": "name_desc",
+                                "label": "Z-A"
+                            },
+                            {
+                                "key": "price_asc",
+                                "label": "Price: low to high"
+                            },
+                            {
+                                "key": "price_desc",
+                                "label": "Price: high to low"
+                            },
+                            {
+                                "key": "popular",
+                                "label": "Popular"
+                            },
+                            {
+                                "key": "most_sale",
+                                "label": "Best sellers"
+                            }
+                        ],
+                        "filters": [
+                            {
+                                "filter_id": 3,
+                                "name": "Brand",
+                                "slug": "brand",
+                                "input_type": "multi",
+                                "is_color_filter": false,
+                                "is_clickable": false,
+                                "tag": null,
+                                "meta_title": null,
+                                "meta_description": null,
+                                "meta_keywords": null,
+                                "values": [
+                                    {
+                                        "value_id": 11,
+                                        "name": "Apple",
+                                        "slug": "apple",
+                                        "count": 39,
+                                        "color": null,
+                                        "background": null,
+                                        "background_image": null,
+                                        "meta_title": null,
+                                        "meta_description": null,
+                                        "meta_keywords": null
+                                    },
+                                    {
+                                        "value_id": 12,
+                                        "name": "Samsung",
+                                        "slug": "samsung",
+                                        "count": 33,
+                                        "color": null,
+                                        "background": null,
+                                        "background_image": null,
+                                        "meta_title": null,
+                                        "meta_description": null,
+                                        "meta_keywords": null
+                                    }
+                                ]
+                            }
+                        ],
+                        "items": [
+                            {
+                                "product_id": 101,
+                                "variation_id": 9901,
+                                "name": "iPhone 14 Pro Green 256GB",
+                                "slug": "iphone-14-pro-green-256gb",
+                                "meta_title": "iPhone 14 Pro Green 256GB",
+                                "meta_description": "Apple iPhone 14 Pro Green 256GB",
+                                "meta_keywords": "iphone, apple, 14 pro",
+                                "price": 2039.99,
+                                "old_price": 2199.99,
+                                "discount_price": 2039.99,
+                                "stock": 8,
+                                "is_new": true,
+                                "is_popular": false,
+                                "most_sale": false,
+                                "main_image": "/storage/variations/iphone14pro.jpg"
+                            }
+                        ],
+                        "pagination": {
+                            "current_page": 1,
+                            "per_page": 20,
+                            "total": 234,
+                            "last_page": 12,
+                            "from": 1,
+                            "to": 20,
+                            "has_more": true
+                        },
+                        "links": {
+                            "first": "https://example.com/v1/product/list?page=1",
+                            "last": "https://example.com/v1/product/list?page=12",
+                            "prev": null,
+                            "next": "https://example.com/v1/product/list?page=2"
+                        }
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/product/detail/{slug}",
+            "method": "get",
+            "summary": "Product detail by variation slug",
+            "description": "Returns product detail by variation slug. The slug path parameter must match product_variation_translations.slug. Business rule: product detail works through product variations, and every product must have at least one variation. The response returns current_price for active_variation and also returns payment_methods calculated against the active variation's real current price. If an active discount hour exists and the variation or its product is included in the campaign, discount_price is used as current_price. If payment_methods include installments, base_total, interest_amount, total_with_interest, and monthly_amount are calculated from the active variation current_price.",
+            "authorization": "Public. Authorization is not required.",
+            "pathParams": {
+                "slug": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Variation slug from product_variation_translations.slug.",
+                    "example": "cordless-drill-20v-emtop-118-ecdl6200118"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "menu": {
+                            "id": 12,
+                            "name": "Power Tools",
+                            "meta_title": "Power Tools",
+                            "meta_description": null,
+                            "meta_keywords": null
+                        },
+                        "breadcrumbs": [
+                            {
+                                "id": 5,
+                                "name": "Tools",
+                                "meta_title": "Tools",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            },
+                            {
+                                "id": 12,
+                                "name": "Power Tools",
+                                "meta_title": "Power Tools",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            }
+                        ],
+                        "subcategories": [
+                            {
+                                "id": 13,
+                                "name": "Drills",
+                                "meta_title": "Drills",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            }
+                        ],
+                        "product": {
+                            "id": 220,
+                            "name": "Emtop 118 ECDL6200118 20V Cordless Drill",
+                            "description": "<p>Product description...</p>",
+                            "slug": "emtop-118-20v-cordless-drill",
+                            "is_new": true,
+                            "is_popular": false,
+                            "most_sale": false,
+                            "tags": [],
+                            "published_at": "2026-02-27T10:00:00+04:00",
+                            "meta_title": "Emtop 118 20V Cordless Drill",
+                            "meta_description": null,
+                            "meta_keywords": null
+                        },
+                        "filters": [
+                            {
+                                "filter_id": 3,
+                                "name": "Brand",
+                                "slug": "brand",
+                                "input_type": "single",
+                                "is_color_filter": false,
+                                "is_clickable": false,
+                                "tag": null,
+                                "meta_title": null,
+                                "meta_description": null,
+                                "meta_keywords": null,
+                                "values": [
+                                    {
+                                        "value_id": 11,
+                                        "name": "Emtop",
+                                        "slug": "emtop",
+                                        "count": 0,
+                                        "color": null,
+                                        "image": null,
+                                        "meta_title": null,
+                                        "meta_description": null,
+                                        "meta_keywords": null
+                                    }
+                                ]
+                            }
+                        ],
+                        "active_variation": {
+                            "id": 9901,
+                            "name": "Emtop 118 ECDL6200118 20V Cordless Drill",
+                            "slug": "emtop-118-20v-cordless-drill-ecdl6200118",
+                            "stock": 10,
+                            "price": 64.8,
+                            "old_price": null,
+                            "discount_price": null,
+                            "current_price": 64.8,
+                            "meta_title": "Emtop 118 ECDL6200118 20V Cordless Drill",
+                            "meta_description": null,
+                            "meta_keywords": null,
+                            "main_image_path": "/storage/variations/emtop-drill.jpg",
+                            "gallery": [
+                                {
+                                    "id": 501,
+                                    "path": "/storage/variations/emtop-drill.jpg",
+                                    "sort_order": 0,
+                                    "is_main": true
+                                }
+                            ],
+                            "filters": [
+                                {
+                                    "filter_id": 3,
+                                    "name": "Brand",
+                                    "slug": "brand",
+                                    "input_type": "single",
+                                    "is_color_filter": false,
+                                    "is_clickable": false,
+                                    "tag": null,
+                                    "meta_title": null,
+                                    "meta_description": null,
+                                    "meta_keywords": null,
+                                    "values": [
+                                        {
+                                            "value_id": 11,
+                                            "name": "Emtop",
+                                            "slug": "emtop",
+                                            "count": 0,
+                                            "color": null,
+                                            "image": null,
+                                            "meta_title": null,
+                                            "meta_description": null,
+                                            "meta_keywords": null
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "variations": [
+                            {
+                                "id": 9901,
+                                "name": "Emtop 118 ECDL6200118 20V Cordless Drill",
+                                "slug": "emtop-118-20v-cordless-drill-ecdl6200118",
+                                "stock": 10,
+                                "price": 64.8,
+                                "old_price": null,
+                                "discount_price": null,
+                                "current_price": 64.8,
+                                "meta_title": "Emtop 118 ECDL6200118 20V Cordless Drill",
+                                "meta_description": null,
+                                "meta_keywords": null,
+                                "main_image_path": "/storage/variations/emtop-drill.jpg",
+                                "gallery": [
+                                    {
+                                        "id": 501,
+                                        "path": "/storage/variations/emtop-drill.jpg",
+                                        "sort_order": 0,
+                                        "is_main": true
+                                    }
+                                ],
+                                "filters": []
+                            }
+                        ],
+                        "payment_methods": [
+                            {
+                                "key": "cash_on_delivery",
+                                "name": "Cash on delivery",
+                                "description": null,
+                                "type": "offline",
+                                "is_online": false,
+                                "requires_redirect": false,
+                                "gateway_code": null,
+                                "icon_path": null,
+                                "installments": [],
+                                "translation_language_id": 1
+                            },
+                            {
+                                "key": "birkart",
+                                "name": "BirKart 3/6/12 months",
+                                "description": "Installment payment by card",
+                                "type": "installment",
+                                "is_online": false,
+                                "requires_redirect": false,
+                                "gateway_code": null,
+                                "icon_path": "https://app.example.com/storage/payment-methods/birkart.png",
+                                "installments": [
+                                    {
+                                        "id": 11,
+                                        "month": 3,
+                                        "percent": 0,
+                                        "sort_order": 0,
+                                        "base_total": 64.8,
+                                        "interest_amount": 0,
+                                        "total_with_interest": 64.8,
+                                        "monthly_amount": 21.6
+                                    },
+                                    {
+                                        "id": 12,
+                                        "month": 6,
+                                        "percent": 4.5,
+                                        "sort_order": 1,
+                                        "base_total": 64.8,
+                                        "interest_amount": 2.92,
+                                        "total_with_interest": 67.72,
+                                        "monthly_amount": 11.29
+                                    }
+                                ],
+                                "translation_language_id": 1
+                            },
+                            {
+                                "key": "online_card_payriff",
+                                "name": "Online card payment",
+                                "description": "Payment through Payriff gateway",
+                                "type": "online",
+                                "is_online": true,
+                                "requires_redirect": true,
+                                "gateway_code": "payriff",
+                                "icon_path": "https://app.example.com/storage/payment-methods/payriff.png",
+                                "installments": [],
+                                "translation_language_id": 1
+                            }
+                        ],
+                        "labels": [
+                            {
+                                "id": 2,
+                                "name": "New",
+                                "slug": "new",
+                                "color": "#ffffff",
+                                "background": "#ff0000",
+                                "meta_title": null,
+                                "meta_description": null,
+                                "meta_keywords": null
+                            }
+                        ],
+                        "comments": {
+                            "items": [],
+                            "pagination": {
+                                "current_page": 1,
+                                "per_page": 0,
+                                "total": 0,
+                                "last_page": 1,
+                                "from": null,
+                                "to": null,
+                                "has_more": false
+                            },
+                            "links": {
+                                "first": null,
+                                "last": null,
+                                "prev": null,
+                                "next": null
+                            }
+                        },
+                        "related": [
+                            {
+                                "product_id": 101,
+                                "variation_id": 9902,
+                                "name": "Related product 1",
+                                "slug": "related-product-1",
+                                "meta_title": "Related product 1",
+                                "meta_description": null,
+                                "meta_keywords": null,
+                                "price": 88,
+                                "old_price": null,
+                                "discount_price": null,
+                                "current_price": 88,
+                                "stock": 5,
+                                "is_new": false,
+                                "is_popular": false,
+                                "most_sale": false,
+                                "main_image": "/storage/variations/related1.jpg"
+                            }
+                        ]
+                    }
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/product/detail/{slug}/buy-now",
+            "method": "post",
+            "summary": "Direct checkout / buy now",
+            "description": "Creates an order directly from the variation selected on the product detail page. The endpoint creates a temporary cart in the background, adds the selected variation to it, validates stock, creates the order, and returns the flow according to the selected payment method. Authenticated customers may send address_id. If an authenticated customer does not send address_id and does not send an address payload, the system automatically selects the default address. If the authenticated customer has no address, a validation error is returned. Guest users must send address data inside the address object. name, surname, and passport_fin are not part of the address object; they are sent as root fields and stored in the order address snapshot. Offline payment methods return a successful order response immediately. Online payment methods return the order together with a payment object and redirect_url. The existing customer or guest cart is not modified. The order in the response is returned in the extended OrderResource format, including customer, guest_token, totals.initial_payment, totals.remaining_installment_total, totals.monthly_amount, totals.payable_total, address.name, address.surname, address.passport_fin, items.image, payments, and status_histories.",
+            "authorization": "Public. Authorization: Bearer {token} may be sent for authenticated customers.",
+            "pathParams": {
+                "slug": {
+                    "type": "text",
+                    "required": true,
+                    "description": "Variation slug from product_variation_translations.slug.",
+                    "example": "cordless-drill-20v-emtop-118-ecdl6200118"
+                }
+            },
+            "query": {},
+            "formData": false,
+            "formBody": {
+                "qty": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Product quantity. Defaults to 1 when omitted. The requested quantity cannot be greater than the variation stock.",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Additional personal information for the order. It is sent as a root field, not inside the address object.",
+                    "example": "Orkhan"
+                },
+                "surname": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Additional personal information for the order. It is sent as a root field, not inside the address object.",
+                    "example": "Mammadov"
+                },
+                "passport_fin": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Additional personal information for the order. It is sent as a root field, not inside the address object.",
+                    "example": "7QX9PL2"
+                },
+                "address_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Used only for authenticated customers. If address_id is provided, address payload must not be sent. If an authenticated customer does not provide address_id and does not provide address, the system automatically selects the default address.",
+                    "example": 18
+                },
+                "address": {
+                    "type": "object",
+                    "required": false,
+                    "description": "Must be sent as a nested object for guest users or for authenticated customers who do not use address_id. name, surname, and passport_fin are not part of this object.",
+                    "example": {
+                        "type": "shipping",
+                        "label": "Home",
+                        "recipient_name": "Orkhan Mammadov",
+                        "phone": "994515300050",
+                        "country_id": 1,
+                        "region": "",
+                        "city": "Ganja",
+                        "postal_code": "",
+                        "address_line1": "Baku",
+                        "address_line2": "",
+                        "company": "",
+                        "note": ""
+                    }
+                },
+                "delivery_price_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Required when address_id is not provided. It must be an active delivery price ID.",
+                    "example": 2
+                },
+                "payment_method": {
+                    "type": "string",
+                    "required": true,
+                    "description": "Active payment method key from the order_payment_methods table.",
+                    "example": "online_card_payriff"
+                },
+                "payment_installment_id": {
+                    "type": "number",
+                    "required": false,
+                    "description": "Required when the selected payment method supports installments.",
+                    "example": 12
+                },
+                "comment": {
+                    "type": "string",
+                    "required": false,
+                    "description": "Additional order note.",
+                    "example": "Please call before delivery."
+                }
+            },
+            "requestExamples": [
+                {
+                    "title": "Authenticated customer offline buy now with address_id",
+                    "body": {
+                        "qty": 1,
+                        "name": "Orkhan",
+                        "surname": "Mammadov",
+                        "passport_fin": "7QX9PL2",
+                        "address_id": 18,
+                        "delivery_price_id": null,
+                        "payment_method": "cash_on_delivery",
+                        "payment_installment_id": null,
+                        "comment": "I will pay on delivery."
+                    }
+                },
+                {
+                    "title": "Authenticated customer installment buy now with automatic default address selection",
+                    "body": {
+                        "qty": 1,
+                        "name": "Orkhan",
+                        "surname": "Mammadov",
+                        "passport_fin": "7QX9PL2",
+                        "payment_method": "birkart",
+                        "payment_installment_id": 12,
+                        "comment": "Split into 6 months."
+                    }
+                },
+                {
+                    "title": "Authenticated customer online buy now",
+                    "body": {
+                        "qty": 1,
+                        "name": "Orkhan",
+                        "surname": "Mammadov",
+                        "passport_fin": "7QX9PL2",
+                        "address_id": 18,
+                        "delivery_price_id": null,
+                        "payment_method": "online_card_payriff",
+                        "payment_installment_id": null,
+                        "comment": "I will pay by card."
+                    }
+                },
+                {
+                    "title": "Guest buy now",
+                    "body": {
+                        "qty": 1,
+                        "name": "Orkhan",
+                        "surname": "Mammadov",
+                        "passport_fin": "7QX9PL2",
+                        "address": {
+                            "type": "shipping",
+                            "label": "Home",
+                            "recipient_name": "Orkhan Mammadov",
+                            "phone": "994515300050",
+                            "country_id": 1,
+                            "region": "",
+                            "city": "Ganja",
+                            "postal_code": "",
+                            "address_line1": "Baku",
+                            "address_line2": "",
+                            "company": "",
+                            "note": ""
+                        },
+                        "delivery_price_id": 2,
+                        "payment_method": "cash_on_delivery",
+                        "payment_installment_id": null,
+                        "comment": "I will pay on delivery."
+                    }
+                }
+            ],
+            "responses": {
+                "201": {
+                    "success": true,
+                    "message": "Order created successfully.",
+                    "data": {
+                        "flow": "direct_buy",
+                        "is_online_payment": true,
+                        "order": {
+                            "id": 101,
+                            "uuid": "5c84fd44-0cb9-4d33-a4ff-8d7103d7eaa1",
+                            "number": "ORD-20260310-ABC123",
+                            "customer": {
+                                "id": null,
+                                "name": null,
+                                "email": null,
+                                "phone": null
+                            },
+                            "guest_token": "eE2xw7h3pK0mQ1nR8tY6uV4sW2xZ9aB7cD5eF1gH",
+                            "status": {
+                                "code": "pending",
+                                "text": "Pending"
+                            },
+                            "payment_status": {
+                                "code": "pending",
+                                "text": "Pending"
+                            },
+                            "currency": "AZN",
+                            "totals": {
+                                "subtotal": 64.8,
+                                "discount_hour_discount": 0,
+                                "promo_discount": 0,
+                                "delivery_price": 5,
+                                "total": 69.8,
+                                "initial_payment": 0,
+                                "remaining_installment_total": 0,
+                                "monthly_amount": 0,
+                                "payable_total": 69.8
+                            },
+                            "promo": {
+                                "id": null,
+                                "code": null,
+                                "discount": 0
+                            },
+                            "delivery": {
+                                "delivery_price_id": 2,
+                                "name": "Ganja",
+                                "price": 5
+                            },
+                            "payment_method": {
+                                "key": "online_card_payriff",
+                                "name": "Online card payment",
+                                "description": "Payment through Payriff gateway",
+                                "type": "online",
+                                "is_online": true,
+                                "requires_redirect": true,
+                                "gateway_code": "payriff",
+                                "icon_path": "https://app.example.com/storage/payment-methods/payriff.png",
+                                "installments": [],
+                                "selected_installment": null
+                            },
+                            "payments": [
+                                {
+                                    "id": 5001,
+                                    "method_code": "online_card_payriff",
+                                    "status": {
+                                        "code": "pending",
+                                        "text": "Pending"
+                                    },
+                                    "amount": 69.8,
+                                    "currency": "AZN",
+                                    "provider_reference": "prf_order_123456789",
+                                    "provider_payment_id": null,
+                                    "redirect_url": "https://payment.example.com/redirect/abc123",
+                                    "payment_installment": null,
+                                    "provider_session": [],
+                                    "provider_payload": [],
+                                    "paid_at": null,
+                                    "failed_at": null,
+                                    "created_at": "2026-03-10T10:15:00.000000Z",
+                                    "updated_at": "2026-03-10T10:15:00.000000Z",
+                                    "events": [
+                                        {
+                                            "id": 7001,
+                                            "event_type": "initiated",
+                                            "provider": "payriff",
+                                            "payload": {
+                                                "order_number": "ORD-20260310-ABC123"
+                                            },
+                                            "occurred_at": "2026-03-10T10:15:00.000000Z",
+                                            "created_at": "2026-03-10T10:15:00.000000Z"
+                                        }
+                                    ]
+                                }
+                            ],
+                            "comment": "I will pay by card.",
+                            "placed_at": "2026-03-10T10:15:00.000000Z",
+                            "paid_at": null,
+                            "cancelled_at": null,
+                            "created_at": "2026-03-10T10:15:00.000000Z",
+                            "updated_at": "2026-03-10T10:15:00.000000Z",
+                            "address": {
+                                "type": "shipping",
+                                "label": "Home",
+                                "name": "Orkhan",
+                                "surname": "Mammadov",
+                                "passport_fin": "7QX9PL2",
+                                "recipient_name": "Orkhan Mammadov",
+                                "phone": "994515300050",
+                                "country_id": 1,
+                                "country": {
+                                    "id": 1,
+                                    "name": "Azerbaijan",
+                                    "code": "AZ"
+                                },
+                                "region": "",
+                                "city": "Ganja",
+                                "postal_code": "",
+                                "address_line1": "Baku",
+                                "address_line2": "",
+                                "company": "",
+                                "note": "",
+                                "created_at": "2026-03-10T10:15:00.000000Z",
+                                "updated_at": "2026-03-10T10:15:00.000000Z"
+                            },
+                            "items": [
+                                {
+                                    "id": 9001,
+                                    "product_id": 220,
+                                    "product_variation_id": 9901,
+                                    "sku": "ECDL6200118",
+                                    "product_name": "Emtop 118 ECDL6200118 20V Cordless Drill",
+                                    "variation_name": "Emtop 118 ECDL6200118 20V Cordless Drill",
+                                    "image": "/storage/order-items/emtop-drill.jpg",
+                                    "qty": 1,
+                                    "original_unit_price": 64.8,
+                                    "unit_price": 64.8,
+                                    "line_subtotal": 64.8,
+                                    "line_discount_hour": 0,
+                                    "line_total": 64.8,
+                                    "meta": {
+                                        "cart_item_id": 777
+                                    }
+                                }
+                            ],
+                            "status_histories": [
+                                {
+                                    "id": 1,
+                                    "from_status": {
+                                        "code": null,
+                                        "text": null
+                                    },
+                                    "to_status": {
+                                        "code": "pending",
+                                        "text": "Pending"
+                                    },
+                                    "changed_by": null,
+                                    "note": "Order created.",
+                                    "created_at": "2026-03-10T10:15:00.000000Z",
+                                    "updated_at": "2026-03-10T10:15:00.000000Z"
+                                }
+                            ]
+                        },
+                        "payment": {
+                            "id": 5001,
+                            "status": "pending",
+                            "redirect_url": "https://payment.example.com/redirect/abc123",
+                            "provider_reference": "prf_order_123456789"
+                        }
+                    }
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": {
+                        "address_id": [
+                            "Please add an address first."
+                        ],
+                        "qty": [
+                            "The maximum quantity available for this product is 2."
+                        ]
+                    }
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/product/categories",
+            "method": "get",
+            "summary": "Product category menu tree",
+            "description": "Returns all active product category menus where menus.type=categories. The response is optimized for the catalog menu UI and contains only the required fields. Language is resolved from the request header by the application locale middleware.",
+            "authorization": "Public. Authorization is not required.",
+            "query": {},
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": [
+                        {
+                            "id": 1,
+                            "parent_id": null,
+                            "name": "Sanitary, water supply and heating",
+                            "link": "/sanitary-water-supply-and-heating",
+                            "image": null,
+                            "icon": {
+                                "class": "fas fa-faucet",
+                                "image": "https://e-commerce.test/storage/menus/categories/img_69e60779402452.09275043.jpg"
+                            },
+                            "children": [
+                                {
+                                    "id": 11,
+                                    "parent_id": 1,
+                                    "name": "Connectors and shut-off valves",
+                                    "link": "/sanitary-water-supply-and-heating/connectors-and-shut-off-valves",
+                                    "image": "https://e-commerce.test/storage/menus/categories/img_69e60779755143.13368951.jpg",
+                                    "icon": {
+                                        "class": null,
+                                        "image": "https://e-commerce.test/storage/menus/categories/img_69e60779755143.13368951.jpg"
+                                    },
+                                    "children": [
+                                        {
+                                            "id": 87,
+                                            "parent_id": 11,
+                                            "name": "Pressure reducers",
+                                            "link": "/sanitary-water-supply-and-heating/connectors-and-shut-off-valves/pressure-reducers",
+                                            "image": null,
+                                            "icon": {
+                                                "class": null,
+                                                "image": null
+                                            },
+                                            "children": []
+                                        },
+                                        {
+                                            "id": 88,
+                                            "parent_id": 11,
+                                            "name": "Valves",
+                                            "link": "/sanitary-water-supply-and-heating/connectors-and-shut-off-valves/valves",
+                                            "image": null,
+                                            "icon": {
+                                                "class": null,
+                                                "image": null
+                                            },
+                                            "children": []
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/product/discount-hours/active",
+            "method": "get",
+            "summary": "Active discount hour",
+            "description": "Returns the currently active discount hour if one exists. A discount hour is active when status=Active and starts_at <= now <= ends_at. If no active discount hour exists, data is returned as null.",
+            "authorization": "Public. Authorization is not required.",
+            "query": {},
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "id": 1,
+                        "starts_at": "2026-02-26T10:00:00+04:00",
+                        "ends_at": "2026-02-26T12:00:00+04:00",
+                        "status": "Active",
+                        "items": [
+                            {
+                                "type": "product",
+                                "id": 100,
+                                "name": "iPhone 15",
+                                "slug": "iphone-15",
+                                "image_url": ""
+                            },
+                            {
+                                "type": "variation",
+                                "id": 501,
+                                "product_id": 100,
+                                "name": "128GB Black",
+                                "slug": "iphone-15-128gb-black",
+                                "product_name": "iPhone 15",
+                                "product_slug": "iphone-15",
+                                "image_url": "/storage/variations/iphone15.jpg"
+                            }
+                        ]
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        },
+        {
+            "path": "/product/brands",
+            "method": "get",
+            "summary": "Brand list",
+            "description": "Returns the active product filter whose translated name or slug matches brand-related keywords such as brand, brands, brend, brendi, brendler, brendlər, бренд, бренды, or бренди. The response uses the same product filter structure used in product list and product detail APIs. Brand values are returned from active product_filter_values of the resolved brand filter.",
+            "authorization": "Public. Authorization is not required.",
+            "query": {},
+            "formData": false,
+            "responses": {
+                "200": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "filter_id": 3,
+                        "name": "Brand",
+                        "slug": "brand",
+                        "input_type": "multi",
+                        "is_color_filter": false,
+                        "show_in_sidebar": true,
+                        "is_required": false,
+                        "is_clickable": true,
+                        "image": null,
+                        "meta_title": "Brand",
+                        "meta_description": "Brand",
+                        "meta_keywords": "Brand",
+                        "values": [
+                            {
+                                "value_id": 11,
+                                "name": "Apple",
+                                "slug": "apple",
+                                "count": 0,
+                                "color": null,
+                                "image": null,
+                                "meta_title": "Apple",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            },
+                            {
+                                "value_id": 12,
+                                "name": "Samsung",
+                                "slug": "samsung",
+                                "count": 0,
+                                "color": null,
+                                "image": "/storage/filters/brand-values/samsung.webp",
+                                "meta_title": "Samsung",
+                                "meta_description": null,
+                                "meta_keywords": null
+                            }
+                        ]
+                    }
+                },
+                "200_empty": {
+                    "success": true,
+                    "message": "OK",
+                    "data": {
+                        "filter_id": 0,
+                        "name": "",
+                        "slug": "",
+                        "input_type": "single",
+                        "is_color_filter": false,
+                        "show_in_sidebar": false,
+                        "is_required": false,
+                        "is_clickable": false,
+                        "image": null,
+                        "meta_title": null,
+                        "meta_description": null,
+                        "meta_keywords": null,
+                        "values": []
+                    }
+                },
+                "401": {
+                    "success": false,
+                    "message": "Unauthorized",
+                    "data": []
+                },
+                "403": {
+                    "success": false,
+                    "message": "Forbidden",
+                    "data": []
+                },
+                "404": {
+                    "success": false,
+                    "message": "Not Found",
+                    "data": []
+                },
+                "422": {
+                    "success": false,
+                    "message": "Validation failed",
+                    "data": []
+                },
+                "500": {
+                    "success": false,
+                    "message": "Server Error",
+                    "data": []
+                }
+            }
+        }
+    ]
+}

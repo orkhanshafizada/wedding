@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <title>Orxan və Aytac | Nişan Dəvətnaməsi</title>
+
+    <meta name="description" content="Orxan və Aytacın nişan mərasiminə dəvətlisiniz.">
+    <meta name="theme-color" content="#f7b7cf">
+
+    <meta property="og:title" content="Orxan və Aytac | Nişan Dəvətnaməsi">
+    <meta property="og:description" content="Sizi nişan mərasimimizdə görməkdən məmnun olarıq.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ asset("assets/gallery/1.jpeg") }}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Parisienne&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" href="{{asset("assets/css/main.css")}}">
+</head>
+<body>
+<audio id="weddingMusic" src="{{asset("assets/audio/music.mp3")}}" preload="auto" loop></audio>
+
+<div class="global-botanicals" aria-hidden="true">
+    <span class="petal petal-one"></span>
+    <span class="petal petal-two"></span>
+    <span class="petal petal-three"></span>
+    <span class="petal petal-four"></span>
+    <span class="petal petal-five"></span>
+    <span class="petal petal-six"></span>
+    <span class="petal petal-seven"></span>
+    <span class="petal petal-eight"></span>
+
+    <span class="flower flower-one"></span>
+    <span class="flower flower-two"></span>
+    <span class="flower flower-three"></span>
+    <span class="flower flower-four"></span>
+
+    <span class="leaf leaf-one"></span>
+    <span class="leaf leaf-two"></span>
+    <span class="leaf leaf-three"></span>
+    <span class="leaf leaf-four"></span>
+</div>
+
+<div class="invitation-intro" data-intro>
+    <div class="intro-light intro-light-one" aria-hidden="true"></div>
+    <div class="intro-light intro-light-two" aria-hidden="true"></div>
+
+    <div class="envelope-scene">
+        <p class="intro-scene-kicker">Nişan Dəvətnaməsi</p>
+
+        <div class="envelope">
+            <div class="envelope-back" aria-hidden="true"></div>
+
+            <article class="intro-invitation-card">
+                <div class="intro-card-frame" aria-hidden="true"></div>
+
+                <p class="intro-kicker">Nişan Dəvətnaməsi</p>
+
+                <h1>
+                    Orxan
+                    <span>&</span>
+                    Aytac
+                </h1>
+
+                <div class="intro-divider" aria-hidden="true"></div>
+
+                <p class="intro-date">26 Avqust 2026 · 18:00</p>
+                <p class="intro-place">Ay Lolo Şadlıq Sarayı</p>
+            </article>
+
+            <div class="envelope-front" aria-hidden="true">
+                <svg
+                        class="envelope-ornament envelope-ornament-left"
+                        viewBox="0 0 180 420"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path d="M30 402C58 340 45 278 80 224C107 182 130 146 121 80"/>
+                    <path d="M79 229C44 218 27 192 20 159"/>
+                    <path d="M91 206C126 191 148 165 158 127"/>
+                    <path d="M54 301C28 287 15 264 12 236"/>
+                    <path d="M67 267C102 255 126 231 139 198"/>
+                    <path d="M118 111C92 98 80 78 78 54"/>
+                    <path d="M121 83C146 69 159 48 162 24"/>
+                    <ellipse cx="23" cy="149" rx="12" ry="25" transform="rotate(-35 23 149)"/>
+                    <ellipse cx="151" cy="119" rx="12" ry="26" transform="rotate(38 151 119)"/>
+                    <ellipse cx="16" cy="230" rx="11" ry="23" transform="rotate(-42 16 230)"/>
+                    <ellipse cx="137" cy="190" rx="12" ry="25" transform="rotate(40 137 190)"/>
+                    <ellipse cx="75" cy="48" rx="10" ry="22" transform="rotate(-30 75 48)"/>
+                    <ellipse cx="164" cy="19" rx="10" ry="21" transform="rotate(34 164 19)"/>
+                </svg>
+
+                <svg
+                        class="envelope-ornament envelope-ornament-right"
+                        viewBox="0 0 180 420"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path d="M30 402C58 340 45 278 80 224C107 182 130 146 121 80"/>
+                    <path d="M79 229C44 218 27 192 20 159"/>
+                    <path d="M91 206C126 191 148 165 158 127"/>
+                    <path d="M54 301C28 287 15 264 12 236"/>
+                    <path d="M67 267C102 255 126 231 139 198"/>
+                    <path d="M118 111C92 98 80 78 78 54"/>
+                    <path d="M121 83C146 69 159 48 162 24"/>
+                    <ellipse cx="23" cy="149" rx="12" ry="25" transform="rotate(-35 23 149)"/>
+                    <ellipse cx="151" cy="119" rx="12" ry="26" transform="rotate(38 151 119)"/>
+                    <ellipse cx="16" cy="230" rx="11" ry="23" transform="rotate(-42 16 230)"/>
+                    <ellipse cx="137" cy="190" rx="12" ry="25" transform="rotate(40 137 190)"/>
+                    <ellipse cx="75" cy="48" rx="10" ry="22" transform="rotate(-30 75 48)"/>
+                    <ellipse cx="164" cy="19" rx="10" ry="21" transform="rotate(34 164 19)"/>
+                </svg>
+            </div>
+
+            <div class="envelope-flap" aria-hidden="true">
+                <svg
+                        class="envelope-flap-ornament"
+                        viewBox="0 0 300 170"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path d="M25 18C82 37 118 78 150 145"/>
+                    <path d="M275 18C218 37 182 78 150 145"/>
+                    <path d="M74 40C59 62 58 84 69 105"/>
+                    <path d="M226 40C241 62 242 84 231 105"/>
+                    <ellipse cx="65" cy="111" rx="10" ry="21" transform="rotate(-35 65 111)"/>
+                    <ellipse cx="235" cy="111" rx="10" ry="21" transform="rotate(35 235 111)"/>
+                    <ellipse cx="95" cy="64" rx="9" ry="19" transform="rotate(-42 95 64)"/>
+                    <ellipse cx="205" cy="64" rx="9" ry="19" transform="rotate(42 205 64)"/>
+                </svg>
+            </div>
+
+            <button
+                    class="intro-seal"
+                    type="button"
+                    data-open-invitation
+                    aria-label="Nişan dəvətnaməsini aç"
+            >
+                <span>O</span>
+                <i>&</i>
+                <span>A</span>
+            </button>
+        </div>
+
+        <p class="intro-hint">
+            Dəvətnaməni açmaq üçün möhürə toxunun
+        </p>
+    </div>
+</div>
+
+<div class="page-shell" data-page>
+    <header class="site-header" data-header>
+        <a class="brand-link" href="#home" aria-label="Dəvətnamənin əvvəlinə keç">
+            <span>O</span>
+            <span>&</span>
+            <span>A</span>
+        </a>
+
+        <nav class="main-navigation" aria-label="Əsas menyu">
+            <a href="#invitation">Dəvətnamə</a>
+            <a href="#venue">Məkan</a>
+            <a href="#gallery">Qalereya</a>
+            <a href="#wishes">Arzular</a>
+        </nav>
+
+        <button
+                class="menu-toggle"
+                type="button"
+                data-menu-toggle
+                aria-label="Menyunu aç"
+                aria-expanded="false"
+        >
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <button
+            class="music-toggle"
+            type="button"
+            data-music-toggle
+            aria-label="Musiqini idarə et"
+            aria-pressed="false"
+    >
+        <span data-music-icon>♪</span>
+    </button>
+
+    <main>
+        <section class="hero-section" id="home">
+            <div class="hero-glow hero-glow-one"></div>
+            <div class="hero-glow hero-glow-two"></div>
+
+            <div class="hero-content">
+                <p class="section-kicker reveal-item">Nişan Dəvətnaməsi</p>
+
+                <h1 class="hero-title reveal-item">
+                    <span>Orxan</span>
+                    <span>&</span>
+                    <span>Aytac</span>
+                </h1>
+
+                <p class="hero-date reveal-item">26 Avqust 2026</p>
+
+                <p class="hero-text reveal-item">
+                    Bu özəl günümüzdə sizi yanımızda görməkdən böyük məmnuniyyət duyarıq.
+                </p>
+
+                <div
+                        class="countdown-grid reveal-item"
+                        data-countdown="2026-08-26T18:00:00+04:00"
+                >
+                    <div class="countdown-card">
+                        <strong data-days>00</strong>
+                        <span>Gün</span>
+                    </div>
+
+                    <div class="countdown-card">
+                        <strong data-hours>00</strong>
+                        <span>Saat</span>
+                    </div>
+
+                    <div class="countdown-card">
+                        <strong data-minutes>00</strong>
+                        <span>Dəqiqə</span>
+                    </div>
+
+                    <div class="countdown-card">
+                        <strong data-seconds>00</strong>
+                        <span>Saniyə</span>
+                    </div>
+                </div>
+
+                <div class="hero-actions reveal-item">
+                    <a class="primary-button" href="#invitation">
+                        Dəvətnaməyə Bax
+                    </a>
+
+                    <a class="secondary-button" href="#wishes">
+                        Arzunuzu Yazın
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="invitation-section section-padding" id="invitation">
+            <div class="container">
+                <div class="section-heading reveal-item">
+                    <p class="section-kicker">Dəvət</p>
+
+                    <h2>Sizi Nişanımıza Dəvət Edirik</h2>
+
+                    <p>
+                        Sevincimizi bizimlə bölüşməyiniz bu günü bizim üçün daha da unudulmaz edəcək.
+                    </p>
+                </div>
+
+                <div class="invitation-card reveal-card">
+                    <div class="card-ornament card-ornament-top"></div>
+                    <div class="card-ornament card-ornament-bottom"></div>
+
+                    <p class="invitation-small">Əziz qonaqlar</p>
+
+                    <h3>Orxan & Aytac</h3>
+
+                    <p class="invitation-message">
+                        Həyatımızın ən gözəl başlanğıclarından birində sizi yanımızda görməkdən şərəf duyarıq.
+                    </p>
+
+                    <div class="invitation-info-grid">
+                        <div>
+                            <span>Tarix</span>
+                            <strong>26 Avqust 2026</strong>
+                        </div>
+
+                        <div>
+                            <span>Saat</span>
+                            <strong>18:00</strong>
+                        </div>
+
+                        <div>
+                            <span>Məkan</span>
+                            <strong>Ay Lolo Şadlıq Sarayı</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="venue-section section-padding" id="venue">
+            <div class="container">
+                <div class="venue-layout">
+                    <div class="venue-copy reveal-item">
+                        <p class="section-kicker">Məkan</p>
+
+                        <h2>Ay Lolo Şadlıq Sarayı</h2>
+
+                        <p>
+                            Nişan mərasimimiz Ay Lolo Şadlıq Sarayında baş tutacaq. Sizi bu gözəl axşamda bizimlə
+                            birlikdə görmək istəyirik.
+                        </p>
+
+                        <a
+                                class="primary-button"
+                                href="https://maps.app.goo.gl/dBUfgLU59UajwXbF8"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                        >
+                            Xəritədə Aç
+                        </a>
+                    </div>
+
+                    <div class="venue-card reveal-card">
+                        <span>26</span>
+                        <strong>Avqust</strong>
+                        <em>2026</em>
+                        <p>Saat 18:00</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="gallery-section section-padding" id="gallery">
+            <div class="container">
+                <div class="section-heading reveal-item">
+                    <p class="section-kicker">Qalereya</p>
+                    <h2>Xatirə Anları</h2>
+
+                    <p>
+                        Sevgi və zəriflik dolu anlardan seçilmiş görüntülər.
+                    </p>
+                </div>
+
+                <div class="gallery-grid" data-gallery>
+                    <button
+                            class="gallery-card gallery-card-large reveal-gallery"
+                            type="button"
+                            data-gallery-index="0"
+                            aria-label="Birinci şəkilə bax"
+                    >
+                        <img
+                                src="{{asset("assets/gallery/1.jpeg") }}"
+                                alt="Orxan və Aytacın nişan şəkli 1"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+
+                    <button
+                            class="gallery-card reveal-gallery"
+                            type="button"
+                            data-gallery-index="1"
+                            aria-label="İkinci şəkilə bax"
+                    >
+                        <img
+                                src="{{asset("assets/gallery/2.jpeg") }}"
+                                alt="Orxan və Aytacın nişan şəkli 2"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+
+                    <button
+                            class="gallery-card reveal-gallery"
+                            type="button"
+                            data-gallery-index="2"
+                            aria-label="Üçüncü şəkilə bax"
+                    >
+                        <img
+                                src="{{asset("assets/gallery/3.jpeg") }}"
+                                alt="Orxan və Aytacın nişan şəkli 3"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+
+                    <button
+                            class="gallery-card reveal-gallery"
+                            type="button"
+                            data-gallery-index="3"
+                            aria-label="Dördüncü şəkilə bax"
+                    >
+                        <img
+                                src="{{asset("assets/gallery/4.jpeg") }}"
+                                alt="Orxan və Aytacın nişan şəkli 4"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+
+                    <button
+                            class="gallery-card reveal-gallery"
+                            type="button"
+                            data-gallery-index="4"
+                            aria-label="Beşinci şəkilə bax"
+                    >
+                        <img
+                                src="{{asset("assets/gallery/5.jpeg") }}"
+                                alt="Orxan və Aytacın nişan şəkli 5"
+                                loading="lazy"
+                                decoding="async"
+                        >
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- index.html — qalereya bölməsindən sonra əlavə et -->
+
+        <section
+                id="dress-code"
+                class="dress-code-section section"
+                aria-labelledby="dressCodeTitle"
+        >
+            <div class="dress-code-decoration dress-code-decoration-left" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="dress-code-container">
+                <div class="dress-code-card reveal-card">
+                    <p class="dress-code-kicker">Geyim qaydası</p>
+
+                    <h2 id="dressCodeTitle">Dress Code</h2>
+
+                    <div class="dress-code-divider" aria-hidden="true">
+                        <span></span>
+                    </div>
+
+                    <p class="dress-code-message">
+                        Qırmızı rəngdə
+                        <strong>GEYİNMƏMƏYİNİZ</strong>
+                        xahiş olunur.
+                    </p>
+                </div>
+            </div>
+
+            <div class="dress-code-decoration dress-code-decoration-right" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </section>
+
+        @include('web.partials.form')
+
+        <section class="final-section section-padding">
+            <div class="container">
+                <div class="final-card reveal-card">
+                    <p>Sevincimizi bizimlə bölüşməyiniz diləyi ilə</p>
+                    <h2>Sizi Gözləyirik</h2>
+                    <strong>Orxan & Aytac</strong>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Orxan və Aytacın nişan dəvətnaməsi</p>
+    </footer>
+</div>
+
+<div
+        class="gallery-modal"
+        data-gallery-modal
+        role="dialog"
+        aria-modal="true"
+        aria-label="Nişan qalereyası"
+        aria-hidden="true"
+>
+    <button
+            class="gallery-modal-close"
+            type="button"
+            data-gallery-close
+            aria-label="Qalereyanı bağla"
+    >
+        ×
+    </button>
+
+    <button
+            class="gallery-modal-arrow gallery-modal-arrow-left"
+            type="button"
+            data-gallery-prev
+            aria-label="Əvvəlki şəkil"
+    >
+        ‹
+    </button>
+
+    <figure class="gallery-modal-content">
+        <img src="" alt="" data-gallery-modal-image>
+    </figure>
+
+    <button
+            class="gallery-modal-arrow gallery-modal-arrow-right"
+            type="button"
+            data-gallery-next
+            aria-label="Növbəti şəkil"
+    >
+        ›
+    </button>
+
+    <div
+            class="gallery-modal-counter"
+            data-gallery-counter
+            aria-live="polite"
+    ></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script src="{{asset("assets/js/countdown.js")}}"></script>
+<script src="{{asset("assets/js/gallery.js")}}"></script>
+<script src="{{asset("assets/js/wishes.js")}}"></script>
+<script src="{{asset("assets/js/intro.js")}}"></script>
+<script src="{{asset("assets/js/main.js")}}"></script>
+</body>
+</html>
