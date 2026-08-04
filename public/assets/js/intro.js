@@ -1,22 +1,29 @@
-const intro = document.querySelector("[data-intro]");
-const page = document.querySelector("[data-page]");
+const introElement = document.querySelector("[data-intro]");
+const pageElement = document.querySelector("[data-page]");
 const openInvitationButton = document.querySelector(
-    "[data-open-invitation]"
+    "[data-open-invitation]",
 );
 const weddingMusicElement = document.getElementById("weddingMusic");
 const musicToggleButton = document.querySelector("[data-music-toggle]");
 const musicIconElement = document.querySelector("[data-music-icon]");
 const envelopeElement = document.querySelector(".envelope");
+const envelopeBackElement = document.querySelector(".envelope-back");
+const envelopeFrontElement = document.querySelector(".envelope-front");
 const envelopeFlapElement = document.querySelector(".envelope-flap");
 const envelopeFlapOrnamentElement = document.querySelector(
-    ".envelope-flap-ornament"
+    ".envelope-flap-ornament",
 );
 const invitationCardElement = document.querySelector(
-    ".intro-invitation-card"
+    ".intro-invitation-card",
+);
+const introSealElement = document.querySelector(".intro-seal");
+const introHintElement = document.querySelector(".intro-hint");
+const introKickerElement = document.querySelector(
+    ".intro-scene-kicker",
 );
 
 const prefersReducedMotion = window.matchMedia(
-    "(prefers-reduced-motion: reduce)"
+    "(prefers-reduced-motion: reduce)",
 );
 
 let isInvitationOpening = false;
@@ -52,13 +59,13 @@ const resetWindowPosition = () => {
     window.history.replaceState(
         null,
         "",
-        `${window.location.pathname}${window.location.search}`
+        `${window.location.pathname}${window.location.search}`,
     );
 
     window.scrollTo({
         top: 0,
         left: 0,
-        behavior: "auto"
+        behavior: "auto",
     });
 
     requestAnimationFrame(() => {
@@ -66,24 +73,33 @@ const resetWindowPosition = () => {
     });
 };
 
+const unlockPage = () => {
+    pageElement?.classList.add("is-visible");
+    document.body.classList.remove("is-locked");
+
+    resetWindowPosition();
+};
+
 const finishOpening = () => {
     openingTimeline?.kill();
     openingTimeline = null;
 
-    page?.classList.add("is-visible");
-    document.body.classList.remove("is-locked");
+    unlockPage();
 
-    resetWindowPosition();
-
-    intro?.remove();
+    introElement?.remove();
 };
 
-const getInvitationCardCenterPosition = (gsapInstance) => {
+const openInvitationWithoutAnimation = () => {
+    unlockPage();
+    introElement?.remove();
+};
+
+const getCardCenterPosition = (gsapInstance) => {
     gsapInstance.set(invitationCardElement, {
         x: 0,
         y: 0,
         xPercent: 0,
-        yPercent: 0
+        yPercent: 0,
     });
 
     const cardRectangle = invitationCardElement.getBoundingClientRect();
@@ -94,21 +110,242 @@ const getInvitationCardCenterPosition = (gsapInstance) => {
             (cardRectangle.left + cardRectangle.width / 2),
         y:
             window.innerHeight / 2 -
-            (cardRectangle.top + cardRectangle.height / 2)
+            (cardRectangle.top + cardRectangle.height / 2),
     };
 };
 
-const openInvitationWithoutAnimation = () => {
-    page?.classList.add("is-visible");
-    document.body.classList.remove("is-locked");
+const prepareOpeningElements = (gsapInstance) => {
+    gsapInstance.killTweensOf([
+        introElement,
+        envelopeElement,
+        envelopeBackElement,
+        envelopeFrontElement,
+        envelopeFlapElement,
+        envelopeFlapOrnamentElement,
+        invitationCardElement,
+        introSealElement,
+        introHintElement,
+        introKickerElement,
+    ]);
 
-    resetWindowPosition();
+    gsapInstance.set(pageElement, {
+        autoAlpha: 1,
+    });
 
-    intro?.remove();
+    gsapInstance.set(envelopeElement, {
+        rotationX: 0,
+        rotationY: 0,
+        rotationZ: 0,
+        scale: 1,
+        y: 0,
+        transformPerspective: 1900,
+        transformOrigin: "50% 50%",
+    });
+
+    gsapInstance.set(envelopeFlapElement, {
+        display: "block",
+        visibility: "visible",
+        autoAlpha: 1,
+        rotationX: 0,
+        y: 0,
+        zIndex: 5,
+        transformPerspective: 1900,
+        transformOrigin: "50% 0%",
+    });
+
+    gsapInstance.set(envelopeFlapOrnamentElement, {
+        display: "block",
+        visibility: "visible",
+        autoAlpha: 1,
+    });
+
+    gsapInstance.set(invitationCardElement, {
+        visibility: "visible",
+        autoAlpha: 0,
+        x: 0,
+        y: 0,
+        xPercent: 0,
+        yPercent: 12,
+        rotation: 0,
+        scale: 0.955,
+        transformOrigin: "50% 50%",
+    });
+};
+
+const createOpeningTimeline = (
+    gsapInstance,
+    cardCenterPosition,
+) => {
+    openingTimeline = gsapInstance.timeline({
+        defaults: {
+            overwrite: "auto",
+        },
+        onComplete: finishOpening,
+    });
+
+    openingTimeline
+        .to([introHintElement, introKickerElement], {
+            autoAlpha: 0,
+            y: 8,
+            duration: 0.42,
+            ease: "power2.out",
+            stagger: 0.06,
+        })
+        .to(
+            introSealElement,
+            {
+                scale: 1.12,
+                rotation: 4,
+                duration: 0.2,
+                ease: "power2.out",
+            },
+            "-=0.24",
+        )
+        .to(introSealElement, {
+            autoAlpha: 0,
+            scale: 0.62,
+            rotation: -14,
+            y: 10,
+            duration: 0.55,
+            ease: "back.in(1.8)",
+        })
+        .to(
+            envelopeElement,
+            {
+                scale: 1.025,
+                rotationZ: -0.5,
+                duration: 0.35,
+                ease: "sine.out",
+                force3D: true,
+            },
+            "-=0.28",
+        )
+        .to(
+            envelopeFlapOrnamentElement,
+            {
+                autoAlpha: 0,
+                duration: 0.3,
+                ease: "power1.in",
+            },
+            "-=0.1",
+        )
+        .to(
+            envelopeFlapElement,
+            {
+                rotationX: -92,
+                duration: 1.15,
+                ease: "power2.inOut",
+                force3D: true,
+            },
+            "-=0.16",
+        )
+        .set(envelopeFlapElement, {
+            display: "none",
+            visibility: "hidden",
+            autoAlpha: 0,
+        })
+        .to(
+            envelopeElement,
+            {
+                scale: 1,
+                rotationZ: 0,
+                duration: 0.32,
+                ease: "sine.inOut",
+                force3D: true,
+            },
+            "-=0.08",
+        )
+        .to(
+            invitationCardElement,
+            {
+                autoAlpha: 1,
+                scale: 1,
+                duration: 0.42,
+                ease: "power2.out",
+            },
+            "-=0.2",
+        )
+        .to(
+            invitationCardElement,
+            {
+                yPercent: -60,
+                rotation: -0.4,
+                duration: 1.65,
+                ease: "power3.out",
+                force3D: true,
+            },
+            "-=0.04",
+        )
+        .to(invitationCardElement, {
+            yPercent: -57,
+            rotation: 0.35,
+            duration: 0.34,
+            ease: "sine.inOut",
+            force3D: true,
+        })
+        .to(invitationCardElement, {
+            yPercent: -60,
+            rotation: 0,
+            duration: 0.28,
+            ease: "sine.inOut",
+            force3D: true,
+        })
+        .to(
+            [envelopeFrontElement, envelopeBackElement],
+            {
+                yPercent: 24,
+                autoAlpha: 0,
+                scale: 0.96,
+                duration: 0.92,
+                ease: "power2.inOut",
+                stagger: 0.025,
+                force3D: true,
+            },
+            "-=0.38",
+        )
+        .to(
+            invitationCardElement,
+            {
+                x: cardCenterPosition.x,
+                y: cardCenterPosition.y,
+                yPercent: 0,
+                scale: 1.035,
+                duration: 1.15,
+                ease: "power3.inOut",
+                force3D: true,
+            },
+            "-=0.73",
+        )
+        .to(invitationCardElement, {
+            scale: 1.055,
+            duration: 0.48,
+            ease: "sine.inOut",
+            force3D: true,
+        })
+        .to(
+            invitationCardElement,
+            {
+                autoAlpha: 0,
+                scale: 1.1,
+                duration: 0.68,
+                ease: "power2.in",
+                force3D: true,
+            },
+            "+=0.42",
+        )
+        .to(
+            introElement,
+            {
+                autoAlpha: 0,
+                duration: 0.58,
+                ease: "power2.inOut",
+            },
+            "-=0.42",
+        );
 };
 
 const openInvitation = async () => {
-    if (isInvitationOpening || !intro) {
+    if (isInvitationOpening || !introElement) {
         return;
     }
 
@@ -133,208 +370,28 @@ const openInvitation = async () => {
 
     const gsapInstance = window.gsap;
 
-    gsapInstance.killTweensOf([
-        intro,
-        envelopeElement,
-        envelopeFlapElement,
-        envelopeFlapOrnamentElement,
-        invitationCardElement,
-        ".intro-seal",
-        ".intro-hint",
-        ".intro-scene-kicker",
-        ".envelope-front",
-        ".envelope-back"
-    ]);
+    prepareOpeningElements(gsapInstance);
 
-    gsapInstance.set(page, {
-        autoAlpha: 1
-    });
-
-    gsapInstance.set(envelopeElement, {
-        rotationX: 0,
-        rotationY: 0,
-        scale: 1,
-        transformPerspective: 1800,
-        transformOrigin: "50% 50%"
-    });
-
-    gsapInstance.set(envelopeFlapElement, {
-        rotationX: 0,
-        transformPerspective: 1800,
-        transformOrigin: "50% 0%",
-        filter: "brightness(1)"
-    });
+    const cardCenterPosition = getCardCenterPosition(gsapInstance);
 
     gsapInstance.set(invitationCardElement, {
-        visibility: "visible",
+        x: 0,
+        y: 0,
+        yPercent: 12,
+        scale: 0.955,
         autoAlpha: 0,
-        x: 0,
-        y: 0,
-        xPercent: 0,
-        yPercent: 12,
-        scale: 0.96,
-        transformOrigin: "50% 50%"
     });
 
-    const cardCenterPosition = getInvitationCardCenterPosition(
-        gsapInstance
-    );
-
-    gsapInstance.set(invitationCardElement, {
-        x: 0,
-        y: 0,
-        yPercent: 12,
-        scale: 0.96,
-        autoAlpha: 0
-    });
-
-    openingTimeline = gsapInstance.timeline({
-        defaults: {
-            overwrite: "auto"
-        },
-        onComplete: finishOpening
-    });
-
-    openingTimeline
-        .to(".intro-hint, .intro-scene-kicker", {
-            autoAlpha: 0,
-            y: 7,
-            duration: 0.38,
-            ease: "power2.out",
-            stagger: 0.05
-        })
-        .to(
-            ".intro-seal",
-            {
-                autoAlpha: 0,
-                scale: 0.78,
-                rotation: -7,
-                y: 5,
-                duration: 0.46,
-                ease: "power2.in"
-            },
-            "-=0.22"
-        )
-        .to(
-            envelopeElement,
-            {
-                scale: 1.012,
-                duration: 0.24,
-                ease: "sine.out"
-            },
-            "-=0.16"
-        )
-        .to(
-            envelopeFlapOrnamentElement,
-            {
-                autoAlpha: 0.08,
-                duration: 0.45,
-                ease: "power1.in"
-            },
-            "-=0.05"
-        )
-        .to(
-            envelopeFlapElement,
-            {
-                rotationX: -92,
-                filter: "brightness(0.92)",
-                duration: 0.72,
-                ease: "power2.in"
-            },
-            "-=0.34"
-        )
-        .set(envelopeFlapElement, {
-            zIndex: 1
-        })
-        .to(envelopeFlapElement, {
-            rotationX: -180,
-            filter: "brightness(1.04)",
-            duration: 0.72,
-            ease: "power2.out"
-        })
-        .to(
-            envelopeElement,
-            {
-                scale: 1,
-                duration: 0.28,
-                ease: "sine.inOut"
-            },
-            "-=0.3"
-        )
-        .to(
-            invitationCardElement,
-            {
-                autoAlpha: 1,
-                scale: 1,
-                duration: 0.3,
-                ease: "power1.out"
-            },
-            "-=0.12"
-        )
-        .to(
-            invitationCardElement,
-            {
-                yPercent: -61,
-                duration: 1.5,
-                ease: "power3.out"
-            },
-            "-=0.04"
-        )
-        .to(
-            ".envelope-front, .envelope-back, .envelope-flap",
-            {
-                yPercent: 21,
-                autoAlpha: 0,
-                duration: 0.84,
-                ease: "power2.inOut",
-                stagger: 0.018
-            },
-            "-=0.28"
-        )
-        .to(
-            invitationCardElement,
-            {
-                x: cardCenterPosition.x,
-                y: cardCenterPosition.y,
-                yPercent: 0,
-                scale: 1.035,
-                duration: 1.02,
-                ease: "power3.inOut"
-            },
-            "-=0.68"
-        )
-        .to(invitationCardElement, {
-            scale: 1.055,
-            duration: 0.4,
-            ease: "sine.inOut"
-        })
-        .to(
-            invitationCardElement,
-            {
-                autoAlpha: 0,
-                scale: 1.09,
-                duration: 0.6,
-                ease: "power2.in"
-            },
-            "+=0.3"
-        )
-        .to(
-            intro,
-            {
-                autoAlpha: 0,
-                duration: 0.5,
-                ease: "power2.inOut"
-            },
-            "-=0.36"
-        );
+    createOpeningTimeline(gsapInstance, cardCenterPosition);
 };
 
 document.body.classList.add("is-locked");
 
 openInvitationButton?.addEventListener("click", openInvitation, {
-    once: true
+    once: true,
 });
 
 window.addEventListener("pagehide", () => {
     openingTimeline?.kill();
+    openingTimeline = null;
 });
